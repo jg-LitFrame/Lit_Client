@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: ad6ef108a66aa7a439bf72424a56b8d3
+TrueTypeFontImporter:
+  serializedVersion: 2
+  fontSize: 12
+  forceTextureCase: -2
+  characterSpacing: 1
+  characterPadding: 0
+  includeFontData: 1
+  use2xBehaviour: 0
+  fontNames:
+  - Monaco
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 62ab3d81a332e044aa16ef6cd2a25951, type: 3}
+  - {fileID: 12800000, guid: 974b85e285f47a94aa988645647ff9c9, type: 3}
+  - {fileID: 12800000, guid: 02400354d5ec1b04f852f07c24feebcf, type: 3}
+  - {fileID: 12800000, guid: 70ea775584919ac40ab0e6876bcad647, type: 3}
+  - {fileID: 12800000, guid: 3ce24cbeeae06e347a0c966628168416, type: 3}
+  customCharacters: 
+  fontRenderingMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
