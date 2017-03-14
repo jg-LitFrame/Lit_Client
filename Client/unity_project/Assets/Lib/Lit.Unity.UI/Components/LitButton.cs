@@ -11,11 +11,15 @@ public class LitButton : Button {
         None,
         Shrink,
     }
-    public ClickAnimation animationType = ClickAnimation.Shrink;
-    public float scaleFactor = 0.9f;
-    public float tweenDuration = 0.1f;
-    public string audioName = "btn_click";
 
+    public UnityEngine.Events.UnityEvent onCickEvent;
+    public ClickAnimation animationType = ClickAnimation.Shrink;
+    public string audioName = "btn_click";
+    public float scaleFactor = 0.9f;
+    public float clickInterval = 0.1f;
+    public float tweenDuration = 0.1f;
+
+    private float lastClickTime = 0f;
     private Tweener tweener = null;
     private Vector3 initScale = Vector3.one;
     protected override void Awake()
@@ -51,7 +55,12 @@ public class LitButton : Button {
 
     public void OnClick()
     {
-       LitLogger.Log(this.gameObject.name + "OnClick");
-        
+        LitLogger.Log(this.gameObject.name + "OnClick");
+
+        if(onCickEvent != null && lastClickTime + clickInterval < Time.time)
+        {
+            onCickEvent.Invoke();
+            lastClickTime = Time.time;
+        }
     }
 }
