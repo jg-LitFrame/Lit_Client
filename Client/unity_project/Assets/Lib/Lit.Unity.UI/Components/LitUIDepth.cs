@@ -10,9 +10,9 @@ namespace Lit.Unity{
         void Start()
         {
             float layerValue = Mathf.Log(layer.value, 2);
-            if(layerValue % 1 > float.MinValue)
+            if(layerValue % 1 > 0)
             {
-                LitLogger.ErrorFormat("LitUIDepth => Set Layer Error {0}", gameObject.name);
+                LitLogger.ErrorFormat("LitUIDepth => Set Layer Error {0} , Layer:{1}", gameObject.name, layerValue);
             }
             gameObject.layer = (int)layerValue;
 

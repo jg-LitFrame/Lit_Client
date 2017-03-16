@@ -15,6 +15,7 @@ namespace Lit.Unity.UI
         }
         public override void OnInspectorGUI()
         {
+            litSerObj.Update();
             litSerObj.SerializeProperties(
                 "audioName",
                 "animationType",
@@ -23,6 +24,7 @@ namespace Lit.Unity.UI
                 "tweenDuration",
                  "onCickEvent"
             );
+            litSerObj.Apply();
         }
     }
 

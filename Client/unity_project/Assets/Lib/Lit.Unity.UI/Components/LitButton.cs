@@ -4,63 +4,68 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 using Lit.Unity;
-[AddComponentMenu("LitUI/LitButton")]
-public class LitButton : Button {
-    public enum ClickAnimation
-    {
-        None,
-        Shrink,
-    }
 
-    public UnityEngine.Events.UnityEvent onCickEvent;
-    public ClickAnimation animationType = ClickAnimation.Shrink;
-    public string audioName = "btn_click";
-    public float scaleFactor = 0.9f;
-    public float clickInterval = 0.1f;
-    public float tweenDuration = 0.1f;
+namespace Lit.Unity.UI
+{
 
-    private float lastClickTime = 0f;
-    private Tweener tweener = null;
-    private Vector3 initScale = Vector3.one;
-    protected override void Awake()
-    {
-        base.Awake();
-        onClick.AddListener(OnClick);
-        initScale = transform.localScale;
-    }
-
-    public override void OnPointerDown(PointerEventData eventData)
-    {
-        if (tweener != null) { tweener.Kill(); tweener = null; }
-        switch (animationType)
+    [AddComponentMenu("LitUI/LitButton")]
+    public partial class  LitButton : Button {
+        public enum ClickAnimation
         {
-            case ClickAnimation.Shrink:
-                tweener = transform.DOScale(scaleFactor, tweenDuration);
-                break;
-            case ClickAnimation.None:
-                break;
+            None = 0,
+            Shrink = 1,
         }
-    }
 
-    public override void OnPointerUp(PointerEventData eventData)
-    {
-        if (tweener != null) { tweener.Kill(); tweener = null; }
-        switch (animationType)
+        public UnityEngine.Events.UnityEvent onCickEvent;
+        public ClickAnimation animationType = ClickAnimation.Shrink;
+        public string audioName = "btn_click";
+        public float scaleFactor = 0.9f;
+        public float clickInterval = 0.1f;
+        public float tweenDuration = 0.1f;
+
+        private float lastClickTime = 0f;
+        private Tweener tweener = null;
+        private Vector3 initScale = Vector3.one;
+        protected override void Awake()
         {
-            case ClickAnimation.Shrink:
-                tweener = transform.DOScale(initScale, tweenDuration);
-                break;
+            base.Awake();
+            onClick.AddListener(OnClick);
+            initScale = transform.localScale;
         }
-    }
 
-    public void OnClick()
-    {
-        LitLogger.Log(this.gameObject.name + "OnClick");
-
-        if(onCickEvent != null && lastClickTime + clickInterval < Time.time)
+        public override void OnPointerDown(PointerEventData eventData)
         {
-            onCickEvent.Invoke();
-            lastClickTime = Time.time;
+            if (tweener != null) { tweener.Kill(); tweener = null; }
+            switch (animationType)
+            {
+                case ClickAnimation.Shrink:
+                    tweener = transform.DOScale(scaleFactor, tweenDuration);
+                    break;
+                case ClickAnimation.None:
+                    break;
+            }
+        }
+
+        public override void OnPointerUp(PointerEventData eventData)
+        {
+            if (tweener != null) { tweener.Kill(); tweener = null; }
+            switch (animationType)
+            {
+                case ClickAnimation.Shrink:
+                    tweener = transform.DOScale(initScale, tweenDuration);
+                    break;
+            }
+        }
+
+        public void OnClick()
+        {
+            LitLogger.Log(this.gameObject.name + "OnClick");
+
+            if(onCickEvent != null && lastClickTime + clickInterval < Time.time)
+            {
+                onCickEvent.Invoke();
+                lastClickTime = Time.time;
+            }
         }
     }
 }

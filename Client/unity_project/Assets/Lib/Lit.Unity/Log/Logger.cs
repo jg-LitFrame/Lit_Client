@@ -25,7 +25,7 @@ namespace Lit.Unity
         #region Debug.LogFormat 重构
         public static _D_Void_Params LogFormat
         {
-            get { return Debug.LogErrorFormat; }
+            get { return Debug.LogFormat; }
         }
         public static _D_Void_Params WarningFormat
         {

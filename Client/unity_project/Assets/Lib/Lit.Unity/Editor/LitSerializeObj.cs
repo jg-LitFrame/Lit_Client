@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEditor;
 
-namespace Lit.Unity.UI
+namespace Lit.Unity
 {
 
     public class LitSerializeObj {
@@ -11,6 +11,17 @@ namespace Lit.Unity.UI
         private LitSerializeObj(UnityEngine.Object obj) {
             serializedObject = new SerializedObject(obj);
         }
+
+        public void Update()
+        {
+            serializedObject.Update();
+        }
+
+        public void Apply()
+        {
+            serializedObject.ApplyModifiedProperties();
+        }
+
         public static LitSerializeObj Create(UnityEngine.Object obj)
         {
             if(obj == null)

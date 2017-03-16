@@ -1,15 +1,17 @@
 #region Header
-/**
- * JsonData.cs
- *   Generic type to hold JSON data (objects, arrays, and so on). This is
- *   the default type returned by JsonMapper.ToObject().
- *
- * The authors disclaim copyright to this source code. For more details, see
- * the COPYING file included with this distribution.
- **/
+
 #endregion
 
 
+using Lit.Unity;
+/**
+* JsonData.cs
+*   Generic type to hold JSON data (objects, arrays, and so on). This is
+*   the default type returned by JsonMapper.ToObject().
+*
+* The authors disclaim copyright to this source code. For more details, see
+* the COPYING file included with this distribution.
+**/
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -407,50 +409,50 @@ namespace LitJson
 
 
         #region Explicit Conversions
-        public static explicit operator Boolean (JsonData data)
-        {
-            if (data.type != JsonType.Boolean)
-                throw new InvalidCastException (
-                    "Instance of JsonData doesn't hold a double");
+        //public static explicit operator Boolean (JsonData data)
+        //{
+        //    if (data.type != JsonType.Boolean)
+        //        throw new InvalidCastException (
+        //            "Instance of JsonData doesn't hold a double");
 
-            return data.inst_boolean;
-        }
+        //    return data.inst_boolean;
+        //}
 
-        public static explicit operator Double (JsonData data)
-        {
-            if (data.type != JsonType.Double)
-                throw new InvalidCastException (
-                    "Instance of JsonData doesn't hold a double");
+        //public static explicit operator Double (JsonData data)
+        //{
+        //    if (data.type != JsonType.Double)
+        //        throw new InvalidCastException (
+        //            "Instance of JsonData doesn't hold a double");
 
-            return data.inst_double;
-        }
+        //    return data.inst_double;
+        //}
 
-        public static explicit operator Int32 (JsonData data)
-        {
-            if (data.type != JsonType.Int)
-                throw new InvalidCastException (
-                    "Instance of JsonData doesn't hold an int");
+        //public static explicit operator Int32 (JsonData data)
+        //{
+        //    if (data.type != JsonType.Int)
+        //        throw new InvalidCastException (
+        //            "Instance of JsonData doesn't hold an int");
 
-            return data.inst_int;
-        }
+        //    return data.inst_int;
+        //}
 
-        public static explicit operator Int64 (JsonData data)
-        {
-            if (data.type != JsonType.Long)
-                throw new InvalidCastException (
-                    "Instance of JsonData doesn't hold an int");
+        //public static explicit operator Int64 (JsonData data)
+        //{
+        //    if (data.type != JsonType.Long)
+        //        throw new InvalidCastException (
+        //            "Instance of JsonData doesn't hold an int");
 
-            return data.inst_long;
-        }
+        //    return data.inst_long;
+        //}
 
-        public static explicit operator String (JsonData data)
-        {
-            if (data.type != JsonType.String)
-                throw new InvalidCastException (
-                    "Instance of JsonData doesn't hold a string");
+        //public static explicit operator String (JsonData data)
+        //{
+        //    if (data.type != JsonType.String)
+        //        throw new InvalidCastException (
+        //            "Instance of JsonData doesn't hold a string");
 
-            return data.inst_string;
-        }
+        //    return data.inst_string;
+        //}
         #endregion
 
 
@@ -958,7 +960,158 @@ namespace LitJson
 
 
 
-        //================================= 扩展 =================================
+        #region 扩展方法
+        public bool Contains(string key)
+        {
+            if(this.inst_object != null && this.inst_object.ContainsKey(key))
+            {
+                return true;
+            }
+            return false;
+        }
+        #endregion
+
+        #region 扩展 implicit Conversions
+        public static implicit operator Boolean(JsonData data)
+        {
+            Boolean ret = false;
+            object v = null;
+            try
+            {
+                v = data.GetValue();
+                if (v != null)
+                    ret = System.Convert.ToBoolean(v);
+            }
+            catch (Exception e)
+            {
+                LitLogger.ErrorFormat("{0} : {1}", e.Message, v);
+            }
+            return ret;
+        }
+
+        public static implicit operator Double(JsonData data)
+        {
+            Double ret = 0;
+            object v = null;
+            try
+            {
+                v = data.GetValue();
+                if (v != null)
+                    ret = System.Convert.ToDouble(v);
+            }
+            catch (Exception e)
+            {
+                LitLogger.ErrorFormat("{0} : {1}", e.Message, v);
+            }
+            return ret;
+        }
+
+        public static implicit operator Int32(JsonData data)
+        {
+            Int32 ret = 0;
+            object v = null;
+            try
+            {
+                v = data.GetValue();
+                if (v != null)
+                    ret = System.Convert.ToInt32(v);
+            }
+            catch (Exception e)
+            {
+                LitLogger.ErrorFormat("{0} : {1}", e.Message, v);
+            }
+            return ret;
+        }
+
+        public static implicit operator Int64(JsonData data)
+        {
+            Int64 ret = 0;
+            object v = null;
+            try
+            {
+                v = data.GetValue();
+                if (v != null)
+                    ret = System.Convert.ToInt64(v);
+            }
+            catch (Exception e)
+            {
+                LitLogger.ErrorFormat("{0} : {1}",e.Message,v);
+            }
+            return ret;
+        }
+
+        public static implicit operator String(JsonData data)
+        {
+            string ret = "";
+            object v = null;
+            try
+            {
+                v = data.GetValue();
+                if(v != null)
+                    ret = System.Convert.ToString(v);
+            }
+            catch (Exception e)
+            {
+                LitLogger.ErrorFormat("{0} : {1}", e.Message, v);
+            }
+            return ret;
+        }
+
+        public static implicit operator float(JsonData data)
+        {
+            float ret = 0;
+            object v = null;
+            try
+            {
+                v = data.GetValue();
+                if (v != null)
+                    ret = (float)(System.Convert.ToDouble(v));
+            }
+            catch (Exception e)
+            {
+                LitLogger.ErrorFormat("{0} : {1}", e.Message, v);
+            }
+            return ret;
+        }
+
+
+        public object GetValue()
+        {
+            object ret = null;
+            switch (type)
+            {
+                case JsonType.None:
+                    break;
+
+                case JsonType.Object:
+                    break;
+
+                case JsonType.Array:
+                    break;
+
+                case JsonType.String:
+                    ret = inst_string;
+                    break;
+
+                case JsonType.Int:
+                    ret = inst_int;
+                    break;
+
+                case JsonType.Long:
+                    ret = inst_long;
+                    break;
+
+                case JsonType.Double:
+                    ret = inst_double;
+                    break;
+
+                case JsonType.Boolean:
+                    ret = inst_boolean;
+                    break;
+            }
+            return ret;
+        }
+        #endregion
 
     }
 
