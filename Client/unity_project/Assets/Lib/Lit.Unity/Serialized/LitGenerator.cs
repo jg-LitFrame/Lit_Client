@@ -13,10 +13,14 @@ namespace Lit.Unity
 
         public void Generate()
         {
+            GameObject go = new GameObject("DefValueManager");
+            DefValueMgr.Instance = go.AddComponent<DefValueMgr>();
+
             for (int i = 0; i < serializeObjs.Count; i++)
             {
                 SerializeGO(serializeObjs[i]);
             }
+            GameObject.DestroyImmediate(go);
         }
 
         private void SerializeGO(GameObject go)
@@ -109,13 +113,14 @@ namespace Lit.Unity
 
 
         public string strJson = "";
+        public Transform parent;
         //强行测试一波
         [ContextMenu("TestDeserialize")]
         public void TestDeserialize()
         {
             LitLogger.Log("===================");
             var so = SerializeObj.Create(strJson);
-            LitDeserializer lder = new LitDeserializer(so);
+            LitDeserializer lder = new LitDeserializer(so, parent);
             lder.Deserialize();
             LitLogger.Log(so.Serialize());
         }

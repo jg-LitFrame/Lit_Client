@@ -162,6 +162,16 @@ namespace Lit.Unity
             T t = GetComponent<T>();
             return t != default(T);
         }
+
+        public virtual void RemoveOtherComps()
+        {
+            Component[] cs = GetComponents<Component>();
+            for (int i = 0; i < cs.Length; i++)
+            {
+                if (!(cs[i] is Transform) && cs[i].GetType() != GetType())
+                    GameObject.DestroyImmediate(cs[i]);
+            }
+        }
         #endregion
 
     }

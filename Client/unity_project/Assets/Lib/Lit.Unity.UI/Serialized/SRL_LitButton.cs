@@ -9,23 +9,30 @@ namespace Lit.Unity.UI
         public SerializeEntity Serialize()
         {
             SerializeEntity data = new SerializeEntity();
-            data.Type = "btn";
-            data.Add("AN", audioName)
-                .Add("AT", (int)this.animationType)
-                .Add("TD", tweenDuration)
-                .Add("SF", scaleFactor)
-                .Add("CI", clickInterval);
+            LitButton defBtn = DefValueMgr.Instance.GetDefComp<LitButton>();
+	        data.Type = "Btn";
+            data.Add("AN", audioName, defBtn.audioName)
+                .Add("AT", (int)this.animationType, (int)defBtn.animationType)
+                .Add("TD", tweenDuration, defBtn.tweenDuration)
+                .Add("SF", scaleFactor, defBtn.scaleFactor)
+                .Add("CI", clickInterval, defBtn.clickInterval);
             return data;
         }
 
         public void DeSerialize(SerializeEntity data)
         {
-            this.audioName = data["AN"];
-            this.clickInterval = data["CI"];
-            this.tweenDuration = data["TD"];
-            this.scaleFactor = data["SF"];
-            int CA = data["AT"];
-            this.animationType = (ClickAnimation)CA;
+
+            SerializeUitls.SetString(ref audioName, data, "AN");
+            SerializeUitls.SetFloat(ref clickInterval, data, "AN");
+            SerializeUitls.SetFloat(ref tweenDuration, data, "TD");
+            SerializeUitls.SetFloat(ref scaleFactor, data, "SF");
+
+            int aType = -1;
+            SerializeUitls.SetInt(ref aType, data, "AT");
+            if(aType != -1)
+            {
+                this.animationType = (ClickAnimation)aType;
+            }
         }
     }
 }

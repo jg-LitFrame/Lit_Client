@@ -2,6 +2,8 @@
 using System.Collections;
 using UnityEngine.Events;
 using Lit.Unity;
+using UnityEngine.UI;
+
 public class Test : MonoBehaviour {
 
 
@@ -24,11 +26,24 @@ public class Test : MonoBehaviour {
     public void TestRotation()
     {
         //Debug.Log(transform.localRotation.eulerAngles);
-        //Debug.Log(transform.localRotation);
+        Debug.Log(transform.localEulerAngles);
 
-
+        transform.localEulerAngles = new Vector3(29, 75, 44.6f);
         //Vector3 v = new Vector3(345, 345, 304.9997f);
 
         // Debug.Log(Quaternion.Euler(v));
+    }
+
+    [ContextMenu("testBool")]
+    public void testBool()
+    {
+        LitLogger.Log(System.Convert.ToBoolean("false"));
+    }
+
+    [ContextMenu("testText")]
+    public void testText()
+    {
+        Text t = GetComponent<Text>();
+        LitLogger.Log(t.alignment.ToString());
     }
 }

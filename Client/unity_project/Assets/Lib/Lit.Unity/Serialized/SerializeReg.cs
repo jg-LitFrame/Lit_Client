@@ -10,7 +10,12 @@ namespace Lit.Unity
 
         private static Dictionary<string, Type> allSerializeType = new Dictionary<string, Type>{
             { "Trans",typeof(Transform) },
-            { "btn",typeof(LitButton) },
+            { "RectTrans",typeof(RectTransform) },
+            { "CanvasRender",typeof(CanvasRenderer) },
+            { "Btn",typeof(LitButton) },
+            { "Text",typeof(LitText) },
+            { "Img",typeof(LitImage) },
+            { "RImg",typeof(LitRawImage) },
 
         };
 
@@ -20,6 +25,18 @@ namespace Lit.Unity
             if(obj is Transform)
             {
                 return (obj as Transform).Serialize();
+            }
+            else if(obj is CanvasRenderer)
+            {
+                return (obj as CanvasRenderer).Serialize();
+            }
+            else if(obj is LitImage)
+            {
+                return (obj as LitImage).Ser_Image();
+            }
+            else if(obj is LitRawImage)
+            {
+                return (obj as LitRawImage).Ser_RawImage();
             }
             return null;
         }
@@ -32,7 +49,14 @@ namespace Lit.Unity
                 (obj as Transform).DeSerialize(data);
                 ret = true;
             }
-
+            else if (obj is LitImage)
+            {
+                (obj as LitImage).D_Image(data);
+            }
+            else if (obj is LitRawImage)
+            {
+                (obj as LitRawImage).D_RawImage(data);
+            }
             return ret;
         }
 

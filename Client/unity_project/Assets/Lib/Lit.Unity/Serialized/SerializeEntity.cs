@@ -65,13 +65,40 @@ namespace Lit.Unity
             return this;
         }
 
+        public SerializeEntity Add(string name, object value, object defV)
+        {
+            string sdef = System.Convert.ToString(defV);
+            string sv = System.Convert.ToString(value);
+            if(sdef != sv)
+            {
+                this[name] = sv;
+            }
+            return this;
+        }
+
         public JsonData Get(string name)
         {
             if(data == null || !data.Contains(name))
             {
+                LitLogger.WarningFormat("Not Found {0} in JsonData {1}", name, data.ToJson());
                 return new JsonData();
             }
             return data[name];
+        }
+
+        public JsonData GetOrDef<T>(string name, T t)
+        {
+            if (data == null || !data.Contains(name))
+            {
+                return new JsonData(t);
+            }
+            return data[name];
+        }
+
+
+        public bool Contains(string key)
+        {
+            return data.Contains(key);
         }
 
         private void EnsureJsonData()
