@@ -8,7 +8,7 @@
 
         <proto desc="协议类型，-p选项">protobuf</proto>
         <output_type desc="输出类型，-t选项">bin</output_type>
-        <proto_file desc="协议描述文件，-f选项">data/config/pbdesc/config_cache/all_config.pb</proto_file>
+        <proto_file desc="协议描述文件，-f选项">data/config/pbdesc/compile_target/all_config.pb</proto_file>
 
         <output_dir desc="输出目录，-o选项"></output_dir>
         <data_src_dir desc="数据源目录，-d选项"></data_src_dir>
