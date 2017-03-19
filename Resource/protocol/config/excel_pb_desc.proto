@@ -1,8 +1,11 @@
 syntax = "proto3";
 
-package lit_frame.config;
+package lit.config;
 
-message hero_skill {
-    uint32          type_id        	= 1;
-    string          display_name 	= 2;
+message hero_skill_jg {
+    string          name 	= 1;
+    string          type_id       	= 2;
+    string          type       	= 3;
+    uint32          id        	= 4;
+
 }

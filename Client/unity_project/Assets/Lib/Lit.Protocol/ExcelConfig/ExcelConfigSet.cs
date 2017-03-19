@@ -110,7 +110,7 @@ namespace Giu.Protobuf {
         public bool Reload() {
             Clear();
 
-            string full_path = FileTools.GetDocumentPath(fileName);
+            string full_path = FileTools.GetDocFilePath(fileName);
             try {
                 var header_desc = factory.GetMsgDiscriptor("com.owent.xresloader.pb.xresloader_datablocks");
                 if (null == header_desc) {
@@ -150,9 +150,16 @@ namespace Giu.Protobuf {
                     }
 
                     datas.Add(data_item);
+
                     foreach (var index in kvIndex) {
                         if (null != index.Handle) {
                             Key key = index.Handle(data_item);
+                            LitLogger.LogFormat("@display_name  key : " + data_item.GetString("name"));
+                            LitLogger.LogFormat("@type  key : " + data_item.GetUInt("id"));
+                            LitLogger.LogFormat("@type_id  key : " + data_item.GetString("type_id"));
+                            LitLogger.LogFormat("@type  key : " + data_item.GetString("type"));
+
+
                             index.Index[key] = data_item;
                         }
                     }
@@ -182,7 +189,7 @@ namespace Giu.Protobuf {
                 LitLogger.ErrorFormat("{0}", e.Message);
                 return false;
             }
-
+            LitLogger.Log("Data Count : " + datas.Count);
             return true;
         }
 
@@ -196,6 +203,7 @@ namespace Giu.Protobuf {
             }
 
             while (kvIndex.Count <= index) {
+                LitLogger.LogFormat("kvIndex Count : {0} , index : {1}", kvIndex.Count, index);
                 KVIndexData obj = new KVIndexData();
                 obj.Handle = null;
                 obj.Index = new Dictionary<Key, DynamicMessage>();
@@ -205,7 +213,10 @@ namespace Giu.Protobuf {
             KVIndexData index_set = kvIndex[index];
             index_set.Handle = fn;
 
+            LitLogger.LogFormat("datas : {0}", datas.Count);
             foreach (var data_item in datas) {
+                LitLogger.LogFormat("datas Count : {0} , data_item : {1}", datas.Count, data_item.GetString("display_name"));
+
                 index_set.Index[index_set.Handle(data_item)] = data_item;
             }
             return this;
@@ -282,6 +293,12 @@ namespace Giu.Protobuf {
         }
 
         public DynamicMessage GetKV(int type, Key key) {
+            LitLogger.Log("kvIndex : " + kvIndex.Count);
+            LitLogger.Log("type : " + type);
+            LitLogger.Log("kvIndex[type].Index : " + kvIndex[type].Index.Keys.Count);
+            foreach(var kv in kvIndex[type].Index){
+                LitLogger.Log(kv.Key.keys[0]);
+            }
             if (type < 0 || type >= kvIndex.Count) {
                 return null;
             }

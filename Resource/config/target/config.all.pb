@@ -1,7 +1,9 @@
 
-y
-excel_pb_desc.protolit_frame.config"H
-
-hero_skill
-type_id (RtypeId!
-display_name (	RdisplayNamebproto3
+‹
+excel_pb_desc.proto
+lit.config"`
+hero_skill_jg
+name (	Rname
+type_id (	RtypeId
+type (	Rtype
+id (Ridbproto3

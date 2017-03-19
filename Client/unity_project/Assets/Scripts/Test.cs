@@ -14,12 +14,6 @@ public class Test : MonoBehaviour {
             .Add("str", "str111")
             .Add("float", 1.244f)
             .Add("double", 2.55);
-        LitLogger.Log(data);
-
-        float intV = data["float"];
-
-        LitLogger.Log(intV);
-        LitLogger.Log(data.Get("int1").GetJsonType());
     }
 
     [ContextMenu("TestRotation")]
@@ -37,6 +31,7 @@ public class Test : MonoBehaviour {
     [ContextMenu("testBool")]
     public void testBool()
     {
+        
         LitLogger.Log(System.Convert.ToBoolean("false"));
     }
 
@@ -45,5 +40,14 @@ public class Test : MonoBehaviour {
     {
         Text t = GetComponent<Text>();
         LitLogger.Log(t.alignment.ToString());
+    }
+
+    
+    [ContextMenu("TestConfig")]
+    public void TestConfig()
+    {
+        uint key = 1;
+        var row = TableMgr.GetTableRow("hero_skill", key);
+        LitLogger.Log(row.GetString("display_name"));
     }
 }

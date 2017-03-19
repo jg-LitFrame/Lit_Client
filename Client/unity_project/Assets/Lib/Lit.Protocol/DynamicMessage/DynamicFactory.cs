@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using google.protobuf;
 using ProtoBuf;
+using Lit.Unity;
 
 namespace Giu.Protobuf {
     public class DynamicFactory {
@@ -22,6 +23,7 @@ namespace Giu.Protobuf {
                     return Register(stream);
                 }
             } catch (Exception e) {
+                LitLogger.Log(e.Message);
                 lastError.AddLast(e.Message);
                 return false;
             }
@@ -136,6 +138,7 @@ namespace Giu.Protobuf {
         }
 
         private void buildFileDescriptor(FileDescriptorSet desc) {
+            Lit.Unity.LitLogger.Log("buildFileDescriptor");
             if (desc == null) throw new ArgumentNullException("FileDescriptorSet can not be null");
 
             foreach(var fd in desc.file) {

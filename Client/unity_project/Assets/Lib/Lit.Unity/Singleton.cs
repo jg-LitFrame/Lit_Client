@@ -7,7 +7,9 @@ namespace Lit.Unity
     {
         private static T _inst = default(T);
 
-        protected Singleton() { }
+        protected Singleton() { 
+            Init();
+        }
 
         public static T GetInstance()
         {
@@ -15,7 +17,7 @@ namespace Lit.Unity
             {
                 _inst = new T();
                 Singleton<T> sg = _inst as Singleton<T>;
-                sg.Init();
+               
             }
             return _inst;
         }
