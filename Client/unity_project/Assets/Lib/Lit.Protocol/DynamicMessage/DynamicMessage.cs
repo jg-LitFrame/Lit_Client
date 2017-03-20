@@ -6,7 +6,7 @@ using System.IO;
 using google.protobuf;
 using ProtoBuf;
 
-namespace Giu.Protobuf {
+namespace Lit.Protobuf {
     public partial class DynamicMessage {
         static readonly UTF8Encoding encoding = new UTF8Encoding();
 

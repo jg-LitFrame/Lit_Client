@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Lit.Unity;
 
-namespace Giu.Protobuf {
+namespace Lit.Protobuf {
     public static class ExcelConfigManager {
         const string CLASS_NAME = "ExcelConfigManager";
         static private DynamicFactory factory = new DynamicFactory();
@@ -18,8 +18,6 @@ namespace Giu.Protobuf {
 
             factory.Register(FileTools.GetDocFilePath("Protocol/pb_header_v3.pb"));
             factory.Register(FileTools.GetDocFilePath("Protocol/config.all.pb"));
-
-            LitLogger.Log("StartupInit");
 
         //    InitRecorder.MarkInitialed(CLASS_NAME);
         }
@@ -43,7 +41,6 @@ namespace Giu.Protobuf {
             }
 
             ExcelConfigSet ret = new ExcelConfigSet(factory, file_name, protocol_name);
-            LitLogger.Log("ExcelConfigSet : " + ret);
             allConfigures[config_name] = ret;
             return ret;
         }
@@ -61,7 +58,6 @@ namespace Giu.Protobuf {
         static public ExcelConfigSet Get(string name) {
             ExcelConfigSet ret;
             if (allConfigures.TryGetValue(name, out ret)) {
-            LitLogger.Log(allConfigures.Count + " " + ret);
                 return ret;
             }
             return null;

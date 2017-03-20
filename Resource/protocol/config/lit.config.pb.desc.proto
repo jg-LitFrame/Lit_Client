@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package lit.config;
+import "lit.config.public.struct.proto";
+
+
+message hero_skill_jg {
+    uint32          type_i      	= 1;
+    uint32          type       	= 2;
+    uint32          id        	= 3;
+    string          name 	= 4;
+    repeated uint32 items = 5 [ packed = false ];
+    repeated item  datas = 6;
+}

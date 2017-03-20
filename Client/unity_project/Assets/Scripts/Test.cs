@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.Events;
 using Lit.Unity;
 using UnityEngine.UI;
+using Lit.Protobuf;
 
 public class Test : MonoBehaviour {
 
@@ -42,12 +43,27 @@ public class Test : MonoBehaviour {
         LitLogger.Log(t.alignment.ToString());
     }
 
-    
+
     [ContextMenu("TestConfig")]
     public void TestConfig()
     {
-        uint key = 21;
+        uint key = 40;
         var row = TableMgr.GetTableRow("hero_skill_jg", key);
-        LitLogger.Log(row.GetString("display_name"));
+        LitLogger.Log(row.GetString("name"));
+
+        var items = row.GetFieldList("items");
+        LitLogger.Log("items Count : " + items.Count);
+        foreach (var i in items){
+            LitLogger.Log(i);
+        }
+
+
+        var datas = row.GetFieldList("datas");
+        LitLogger.Log("datas Count : " + datas.Count);
+        foreach (var d in datas)
+        {
+            var Md = d as DynamicMessage;
+            LitLogger.Log(Md.GetInt("price"));
+        }
     }
 }

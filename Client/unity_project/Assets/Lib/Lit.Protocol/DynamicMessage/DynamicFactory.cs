@@ -6,7 +6,7 @@ using google.protobuf;
 using ProtoBuf;
 using Lit.Unity;
 
-namespace Giu.Protobuf {
+namespace Lit.Protobuf {
     public class DynamicFactory {
         private DynamicMessage.DynamicDiscriptors descriptors;
         private LinkedList<string> lastError = null;
@@ -83,7 +83,6 @@ namespace Giu.Protobuf {
                 lastError.AddLast(ret.LastError);
                 return null;
             }
-            
             return ret;
         }
 
@@ -138,7 +137,6 @@ namespace Giu.Protobuf {
         }
 
         private void buildFileDescriptor(FileDescriptorSet desc) {
-            Lit.Unity.LitLogger.Log("buildFileDescriptor");
             if (desc == null) throw new ArgumentNullException("FileDescriptorSet can not be null");
 
             foreach(var fd in desc.file) {

@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Lit.Unity;
-using Giu.Protobuf;
+using Lit.Protobuf;
 public class TableMgr : Singleton<TableMgr>
 {
 
-    public override void Init()
+    protected override void Init()
     {
         ExcelConfigManager.StartupInit();
         AddConfig("hero_skill_jg", "type");
-        LitLogger.Log("hero_skill");
 
         ExcelConfigManager.ReloadAll();
     }
@@ -23,7 +22,6 @@ public class TableMgr : Singleton<TableMgr>
     public static DynamicMessage GetTableRow(string table_name, object row_id)
     {
         var tb = ExcelConfigManager.Get(table_name);
-        LitLogger.Log(tb);
         return tb.GetKVAuto(row_id);
     }
 }

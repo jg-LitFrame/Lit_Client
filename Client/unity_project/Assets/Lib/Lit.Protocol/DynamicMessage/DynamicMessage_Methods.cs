@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using google.protobuf;
 
-namespace Giu.Protobuf {
+namespace Lit.Protobuf {
     public partial class DynamicMessage {
 
         public DynamicMessage Set(string name, object value) {

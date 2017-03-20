@@ -11,11 +11,13 @@ public class FaceMgr: SingletonBehaviour<FaceMgr>
         base.Init();
         IndieMgrInit();
         InitSingleBehaviour(typeof(AudioMgr));
+        InitSingleBehaviour(typeof(LuaMgr));
     }
 
     private void IndieMgrInit()
     {
         TableMgr.GetInstance();
+       // LuaMgr.GetInstance();
     }
 
     private void InitSingleBehaviour(Type mgrType)
@@ -34,5 +36,10 @@ public class FaceMgr: SingletonBehaviour<FaceMgr>
     public static TableMgr tableMgr
     {
         get { return TableMgr.GetInstance(); }
+    }
+
+    public static LuaMgr luaMgr
+    {
+        get { return LuaMgr.GetInstance(); }
     }
 }

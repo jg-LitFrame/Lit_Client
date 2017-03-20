@@ -22,7 +22,7 @@ namespace Lit.Unity
             return _inst;
         }
 
-        public virtual void Init() { }
+        protected virtual void Init() { }
     }
 
     public class SingletonBehaviour<T> : LitBehaviour where T : LitBehaviour

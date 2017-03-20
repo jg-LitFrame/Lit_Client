@@ -2,22 +2,12 @@
 using System.Collections;
 using ProtoBuf;
 using System.Collections.Generic;
-//using Giu.Unity5.Config;
 using System;
 using System.IO;
-//using Giu.Logger;
 using Lit.Unity;
 
-namespace Giu.Protobuf {
+namespace Lit.Protobuf {
     public class ExcelConfigSet {
-
-        private string fileName;
-        private string protocol;
-        private DynamicFactory factory;
-        private List<DynamicMessage> datas = new List<DynamicMessage>();
-
-        public List<DynamicMessage> Datas { get { return datas; } }
-
         public struct Key {
             public object[] keys;
 
@@ -61,6 +51,16 @@ namespace Giu.Protobuf {
                 return Equals((Key)obj);
             }
         }
+
+
+        #region 数据字段
+        private string fileName;
+        private string protocol;
+        private DynamicFactory factory;
+        private List<DynamicMessage> datas = new List<DynamicMessage>();
+
+        public List<DynamicMessage> Datas { get { return datas; } }
+
 
         public delegate Key IndexFunction(DynamicMessage msg);
         public delegate bool FilterFunction(DynamicMessage msg);
@@ -106,7 +106,10 @@ namespace Giu.Protobuf {
                 index.Index.Clear();
             }
         }
+        #endregion
 
+
+        #region 解析
         public bool Reload() {
             Clear();
 
@@ -154,12 +157,6 @@ namespace Giu.Protobuf {
                     foreach (var index in kvIndex) {
                         if (null != index.Handle) {
                             Key key = index.Handle(data_item);
-                            LitLogger.LogFormat("@display_name  key : " + data_item.GetString("display_name"));
-                            LitLogger.LogFormat("@type  id : " + data_item.GetUInt("id"));
-                            LitLogger.LogFormat("@type_id  key : " + data_item.GetUInt("type_id"));
-                            LitLogger.LogFormat("@type  key : " + data_item.GetUInt("type"));
-
-
                             index.Index[key] = data_item;
                         }
                     }
@@ -189,10 +186,12 @@ namespace Giu.Protobuf {
                 LitLogger.ErrorFormat("{0}", e.Message);
                 return false;
             }
-            LitLogger.Log("Data Count : " + datas.Count);
             return true;
         }
+        #endregion
 
+
+        #region 建索引
         public ExcelConfigSet AddKVIndex(int index, IndexFunction fn) {
             if (index < 0) {
                 throw new ArgumentException("index must not be negetive");
@@ -203,7 +202,6 @@ namespace Giu.Protobuf {
             }
 
             while (kvIndex.Count <= index) {
-                LitLogger.LogFormat("kvIndex Count : {0} , index : {1}", kvIndex.Count, index);
                 KVIndexData obj = new KVIndexData();
                 obj.Handle = null;
                 obj.Index = new Dictionary<Key, DynamicMessage>();
@@ -213,10 +211,7 @@ namespace Giu.Protobuf {
             KVIndexData index_set = kvIndex[index];
             index_set.Handle = fn;
 
-            LitLogger.LogFormat("datas : {0}", datas.Count);
             foreach (var data_item in datas) {
-                LitLogger.LogFormat("datas Count : {0} , data_item : {1}", datas.Count, data_item.GetString("display_name"));
-
                 index_set.Index[index_set.Handle(data_item)] = data_item;
             }
             return this;
@@ -258,7 +253,10 @@ namespace Giu.Protobuf {
 
             return this;
         }
+        #endregion
 
+
+        #region 过滤规则
         public ExcelConfigSet SetKVSortRule(IComparer<DynamicMessage> fn) {
             return SetKVSortRule(0, fn);
         }
@@ -293,12 +291,7 @@ namespace Giu.Protobuf {
         }
 
         public DynamicMessage GetKV(int type, Key key) {
-            LitLogger.Log("kvIndex : " + kvIndex.Count);
-            LitLogger.Log("type : " + type);
-            LitLogger.Log("kvIndex[type].Index : " + kvIndex[type].Index.Keys.Count);
-            foreach(var kv in kvIndex[type].Index){
-                LitLogger.Log(kv.Key.keys[0]);
-            }
+
             if (type < 0 || type >= kvIndex.Count) {
                 return null;
             }
@@ -335,5 +328,6 @@ namespace Giu.Protobuf {
         public List<DynamicMessage> GetKL(Key key) {
             return GetKL(0, key);
         }
+        #endregion
     }
 }
