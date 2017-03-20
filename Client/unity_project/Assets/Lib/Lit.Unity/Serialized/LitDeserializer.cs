@@ -58,6 +58,11 @@ namespace Lit.Unity
         }
         private void InitComp(GameObject go, SerializeEntity se)
         {
+            if (se.Type.StartsWith("LE_"))
+            {
+                InitEventComp(go, se);
+                return;
+            }
             Type type = SerializeReg.GetType(se.Type);
             if(type == null)
             {
@@ -75,6 +80,13 @@ namespace Lit.Unity
                 var comp = go.AddComponent(type);
                 TryDeserializeComp(comp, se);
             }
+        }
+
+        private void InitEventComp(GameObject go, SerializeEntity se)
+        {
+            var litLua = go.GetOrAddComponent<LitLua>();
+            var eventEntity = EventEntity.Parse(se);
+            litLua.RegistEvent(eventEntity);
         }
 
         private void TryDeserializeComp(Component comp, SerializeEntity se)

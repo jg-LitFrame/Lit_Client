@@ -68,6 +68,11 @@ namespace Lit.Unity
                 var sa = comp as ISerializable;
                 retSE = sa.Serialize();
             }
+            if (comp is ISerializeEvent)
+            {
+                var se = comp as ISerializeEvent;
+                retSE = se.Serialize().ToSerializeEntity();
+            }
             if(retSE == null)
             {
                 retSE = TryCallSerializeByReflection(comp);
@@ -76,7 +81,7 @@ namespace Lit.Unity
             {
                 //TODO 完全通过反射的方式序列化对象
             }
-            if(retSE != null && !SerializeReg.HasRegType(retSE.Type))
+            if (retSE != null && !SerializeReg.HasRegType(retSE.Type) && (!(comp is ISerializeEvent)))
             {
                 LitLogger.ErrorFormat("{0} not register in SeriaLizeReg,Can'not be Serialized", retSE.Type);
                 retSE = null;
