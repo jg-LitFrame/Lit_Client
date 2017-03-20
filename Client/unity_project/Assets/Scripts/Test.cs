@@ -46,8 +46,8 @@ public class Test : MonoBehaviour {
     [ContextMenu("TestConfig")]
     public void TestConfig()
     {
-        uint key = 1;
-        var row = TableMgr.GetTableRow("hero_skill", key);
+        uint key = 21;
+        var row = TableMgr.GetTableRow("hero_skill_jg", key);
         LitLogger.Log(row.GetString("display_name"));
     }
 }

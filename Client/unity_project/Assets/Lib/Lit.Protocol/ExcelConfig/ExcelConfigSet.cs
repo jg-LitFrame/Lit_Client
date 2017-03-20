@@ -154,10 +154,10 @@ namespace Giu.Protobuf {
                     foreach (var index in kvIndex) {
                         if (null != index.Handle) {
                             Key key = index.Handle(data_item);
-                            LitLogger.LogFormat("@display_name  key : " + data_item.GetString("name"));
-                            LitLogger.LogFormat("@type  key : " + data_item.GetUInt("id"));
-                            LitLogger.LogFormat("@type_id  key : " + data_item.GetString("type_id"));
-                            LitLogger.LogFormat("@type  key : " + data_item.GetString("type"));
+                            LitLogger.LogFormat("@display_name  key : " + data_item.GetString("display_name"));
+                            LitLogger.LogFormat("@type  id : " + data_item.GetUInt("id"));
+                            LitLogger.LogFormat("@type_id  key : " + data_item.GetUInt("type_id"));
+                            LitLogger.LogFormat("@type  key : " + data_item.GetUInt("type"));
 
 
                             index.Index[key] = data_item;
