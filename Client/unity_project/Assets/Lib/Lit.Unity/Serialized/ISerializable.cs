@@ -20,7 +20,11 @@ namespace Lit.Unity
         LE_Enable = 1,
         LE_Disable = 2,
         LE_OnClick = 3,
+        LE_Handler = 4,
+        LE_UID = 5,
+        LE_InitDisable = 6,
     }
+
     public class EventEntity
     {
         private LitEventType eventType = LitEventType.LE_None;
@@ -36,6 +40,16 @@ namespace Lit.Unity
         {
             get { return handleFunc; }
             set { handleFunc = value; }
+        }
+
+        public bool isValid
+        {
+            get
+            {
+                if (EventType == LitEventType.LE_None || handleFunc.isEmpty())
+                    return false;
+                return true;
+            }
         }
 
         public SerializeEntity ToSerializeEntity()
@@ -54,6 +68,10 @@ namespace Lit.Unity
             return eventEntity;
         }
 
+        public override string ToString()
+        {
+            return string.Format("Type : {0} , HandlerFunc : {1}", EventType, HandleFunc);
+        }
 
     }
 

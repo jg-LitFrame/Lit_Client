@@ -22,14 +22,25 @@ namespace Lit.Unity
 
         public void Deserialize()
         {
+            isRoot = true;
+
             GameObject curGo = DeSerialize(so, parent);
 
-
+            if (!curGo.GetOrAddComponent<LitLua>().isRegisterEvent(LitEventType.LE_InitDisable))
+            {
+                curGo.SetActive(true);
+            }
         }
 
+        private bool isRoot = true;
         private GameObject DeSerialize(SerializeObj data,Transform parent = null)
         {
             GameObject curGo = CreateGO(data.ObjName);
+            if (isRoot)
+            {
+                curGo.SetActive(false);
+                isRoot = false;
+            }
             if (parent != null)
                 curGo.transform.SetParent(parent);
             InitComps(curGo, data.Comps);
@@ -38,7 +49,6 @@ namespace Lit.Unity
                 for (int i = 0; i < data.Childs.Count; i++)
                 {
                     var child = DeSerialize(data.Childs[i], curGo.transform);
-                  //  child.transform.SetParent(curGo.transform);
                 }
             }
             return curGo;

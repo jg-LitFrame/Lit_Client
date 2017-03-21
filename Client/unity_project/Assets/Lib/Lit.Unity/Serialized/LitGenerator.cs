@@ -71,7 +71,10 @@ namespace Lit.Unity
             if (comp is ISerializeEvent)
             {
                 var se = comp as ISerializeEvent;
-                retSE = se.Serialize().ToSerializeEntity();
+                var ee = se.Serialize();
+                if(ee != null)
+                    retSE = ee.ToSerializeEntity();
+                return retSE;
             }
             if(retSE == null)
             {

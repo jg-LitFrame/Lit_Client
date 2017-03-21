@@ -3,14 +3,17 @@ using System.Collections;
 using System.IO;
 
 public static class FileTools {
-   
+
+    #region 各种路径
+
     private static string ToLuaRoot = Application.dataPath + "/3rd_Lib/ToLua/";
 
     public static string ToLuaSystemInitPath = ToLuaRoot + "ToLua/Lua/";
 
-
-
     public static string DocsRoot = Application.dataPath + "/Docs/";
+
+    #endregion
+
 
     public static string GetDocFilePath(string child_path)
     {
