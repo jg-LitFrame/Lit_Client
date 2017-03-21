@@ -17,7 +17,7 @@ namespace Lit.Unity.UI
             }
             EventEntity eventEntity = new EventEntity();
             eventEntity.EventType = LitEventType.LE_UID;
-            eventEntity.HandleFunc = UID;
+            eventEntity.EventParam = UID;
             return eventEntity;
         }
       

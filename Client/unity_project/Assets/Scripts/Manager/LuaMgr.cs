@@ -12,9 +12,21 @@ public class LuaMgr :  SingletonBehaviour<LuaMgr>{
     { 
         //初始化lua
         luaMgr = new LuaState();
-      //  new LuaResLoader();
-       // luaMgr.AddSearchPath(FileTools.ToLuaSystemInitPath);
+        InitLuaSearchPath();
         LuaBinder.Bind(luaMgr);
         luaMgr.Start();
+        InitLuaSystem();
+    }
+
+    private void InitLuaSystem()
+    {
+        luaMgr.DoFile("system");
+    }
+
+    private void InitLuaSearchPath()
+    {
+        new LuaResLoader();
+        luaMgr.AddSearchPath(FileTools.ToLuaSystemInitPath);
+        luaMgr.AddSearchPath(FileTools.SysLuaPath);
     }
 }

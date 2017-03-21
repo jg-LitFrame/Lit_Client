@@ -5,8 +5,6 @@ namespace Lit.Unity
 {
     public partial class LitLua {
 
-
-
         public void InitLuaFile(string file_name)
         {
             LoadLuafile(file_name);

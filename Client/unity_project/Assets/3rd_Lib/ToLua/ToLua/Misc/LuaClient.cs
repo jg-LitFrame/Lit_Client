@@ -92,10 +92,10 @@ public class LuaClient : MonoBehaviour
             OpenLuaSocket();
         }
 
-        if (!string.IsNullOrEmpty(LuaConst.zbsDir))
-        {
-            luaState.AddSearchPath(LuaConst.zbsDir);
-        }
+        //if (!string.IsNullOrEmpty(LuaConst.zbsDir))
+        //{
+        //    luaState.AddSearchPath(LuaConst.zbsDir);
+        //}
 
         luaState.LuaDoString(string.Format("DebugServerIp = '{0}'", ip));
     }

@@ -16,7 +16,7 @@ namespace Lit.Unity.UI
             }
             EventEntity eventEntity = new EventEntity();
             eventEntity.EventType = LitEventType.LE_Handler;
-            eventEntity.HandleFunc = script_path;
+            eventEntity.EventParam = script_path;
             return eventEntity;
         }
     }

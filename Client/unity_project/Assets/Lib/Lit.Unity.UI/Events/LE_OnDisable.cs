@@ -17,7 +17,7 @@ namespace Lit.Unity.UI
             }
             EventEntity eventEntity = new EventEntity();
             eventEntity.EventType = LitEventType.LE_Disable;
-            eventEntity.HandleFunc = handler;
+            eventEntity.EventParam = handler;
             return eventEntity;
         }
     }

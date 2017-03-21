@@ -27,7 +27,7 @@ namespace Lit.Unity.UI {
             se.Add("p", SerializeUitls.S_Vector3(trans.localPosition));
             se.Add("r", SerializeUitls.S_Vector3(trans.localEulerAngles));
             se.Add("s", SerializeUitls.S_Vector3(trans.localScale));
-
+            se.Add("active", trans.gameObject.activeSelf);
             return se;
         }
 
@@ -45,7 +45,7 @@ namespace Lit.Unity.UI {
             trans.localPosition = SerializeUitls.D_Vector3(data["p"]);
             trans.localScale = SerializeUitls.D_Vector3(data["s"]);
             trans.localEulerAngles = SerializeUitls.D_Vector3(data["r"]);
-
+            trans.gameObject.SetActive(data["active"]);
         }
 
 

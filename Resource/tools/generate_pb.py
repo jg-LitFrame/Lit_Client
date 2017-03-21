@@ -20,7 +20,7 @@ convert_list_file = os.path.join(resource_repo_dir,'config','convert_list.xml')
 
 #Client 相关路径
 p_client_table = os.path.join(client_project_dir, 'unity_project', 'Assets', 'Docs', 'Table')
-p_client_lua_data = os.path.join(client_project_dir, 'unity_project', 'Assets', 'Docs', 'luaScript', 'data', 'const')
+#p_client_lua_data = os.path.join(client_project_dir, 'unity_project', 'Assets', 'Docs', 'luaScript', 'data', 'const')
 p_client_protocol = os.path.join(client_project_dir, 'unity_project', 'Assets', 'Docs', 'Protocol')
 
 # xresloader
@@ -44,7 +44,7 @@ else:
 
 
 # 自动创建文件夹
-auto_make_dirs = [p_client_table, p_client_protocol, p_client_lua_data]
+auto_make_dirs = [p_client_table, p_client_protocol]
 for dir_path in auto_make_dirs:
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)

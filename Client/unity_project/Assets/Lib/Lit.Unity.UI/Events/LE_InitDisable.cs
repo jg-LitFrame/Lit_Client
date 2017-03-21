@@ -10,6 +10,8 @@ namespace Lit.Unity.UI
         public EventEntity Serialize()
         {
             EventEntity ee = new EventEntity();
+            ee.EventType = LitEventType.LE_InitDisable;
+            ee.EventParam = "false";
             return ee;
         }
     }

@@ -12,6 +12,7 @@ public static class FileTools {
 
     public static string DocsRoot = Application.dataPath + "/Docs/";
 
+    public static string SysLuaPath = DocsRoot + "/LuaCode/";
     #endregion
 
 

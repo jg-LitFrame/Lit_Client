@@ -87,7 +87,7 @@ namespace Lit.Unity
         {
             if (curEvent == null)
                 return;
-            CallLuaFunc(curEvent.EventInfo.HandleFunc, curEvent.Sender);
+            CallLuaFunc(curEvent.EventInfo.EventParam, curEvent.Sender);
 
             if (curEvent != null)
             {
@@ -139,13 +139,17 @@ namespace Lit.Unity
             switch (litEvent.EventType)
             {
                 case LitEventType.LE_None:
-                    LitLogger.ErrorFormat("Register Invalid Event Type {0} , {1}", litEvent.EventType, litEvent.HandleFunc);
+                    LitLogger.ErrorFormat("Register Invalid Event Type {0} , {1}",
+                        litEvent.EventType, litEvent.EventParam);
                     break;
                 case LitEventType.LE_UID:
-                    InitUID(litEvent.HandleFunc);
+                    InitUID(litEvent.EventParam);
                     break;
                 case LitEventType.LE_Handler:
-                    InitLuaFile(litEvent.HandleFunc);
+                    InitLuaFile(litEvent.EventParam);
+                    break;
+                case LitEventType.LE_InitDisable:
+                    InitLitState(litEvent);
                     break;
                 default:
                     InitLifeEvent(litEvent);
@@ -153,7 +157,12 @@ namespace Lit.Unity
             }
         }
 
-
+        private void InitLitState(EventEntity litEvent)
+        {
+            RegisterLifeEvent(litEvent);
+            if (!litEvent.EventParam.isEmpty() && string.Compare(litEvent.EventParam, "false", true) == 0)
+                gameObject.SetActive(false);
+        }
         public void InitUID(string uid)
         {
             UID_Register(uid, this);

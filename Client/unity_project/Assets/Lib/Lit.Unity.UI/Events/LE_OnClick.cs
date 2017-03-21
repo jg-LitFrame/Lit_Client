@@ -16,7 +16,7 @@ namespace Lit.Unity.UI
             }
             EventEntity eventEntity = new EventEntity();
             eventEntity.EventType = LitEventType.LE_OnClick;
-            eventEntity.HandleFunc = handler;
+            eventEntity.EventParam = handler;
             return eventEntity;
         }
     }

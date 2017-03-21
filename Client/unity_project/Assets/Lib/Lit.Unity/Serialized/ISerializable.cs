@@ -28,7 +28,7 @@ namespace Lit.Unity
     public class EventEntity
     {
         private LitEventType eventType = LitEventType.LE_None;
-        private string handleFunc = "";
+        private string eventParam = "";
         
         public LitEventType EventType
         {
@@ -36,17 +36,17 @@ namespace Lit.Unity
             set { eventType = value; }
         }
 
-        public string HandleFunc
+        public string EventParam
         {
-            get { return handleFunc; }
-            set { handleFunc = value; }
+            get { return eventParam; }
+            set { eventParam = value; }
         }
 
         public bool isValid
         {
             get
             {
-                if (EventType == LitEventType.LE_None || handleFunc.isEmpty())
+                if (EventType == LitEventType.LE_None || eventParam.isEmpty())
                     return false;
                 return true;
             }
@@ -56,21 +56,21 @@ namespace Lit.Unity
         {
             SerializeEntity se = new SerializeEntity();
             se.Type = EventType.ToString();
-            se.Add("HF", HandleFunc);
+            se.Add("EP", EventParam);
             return se;
         }
 
         public static EventEntity Parse(SerializeEntity se)
         {
             EventEntity eventEntity = new EventEntity();
-            eventEntity.HandleFunc = se["HF"];
+            eventEntity.EventParam = se["EP"];
             eventEntity.EventType = (LitEventType)System.Enum.Parse(typeof(LitEventType), se.Type);
             return eventEntity;
         }
 
         public override string ToString()
         {
-            return string.Format("Type : {0} , HandlerFunc : {1}", EventType, HandleFunc);
+            return string.Format("Type : {0} , HandlerFunc : {1}", EventType, EventParam);
         }
 
     }
