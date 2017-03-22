@@ -25,6 +25,8 @@ public static class CustomSettings
         typeof(UnityEngine.RenderSettings),
         typeof(UnityEngine.QualitySettings),
         typeof(UnityEngine.GL),
+        typeof(Lit.Unity.UI.UIUtils),
+
     };
 
     //附加导出委托类型(在导出委托时, customTypeList 中牵扯的委托类型都会导出， 无需写在这里)
@@ -140,6 +142,9 @@ public static class CustomSettings
         _GT(typeof(BlendWeights)),           
         _GT(typeof(RenderTexture)),
         _GT(typeof(Resources)),
+
+        //========= 自定义导出 ==========
+        _GT(typeof(Lit.Unity.UI.UIUtils)),
     };
 
     public static List<Type> dynamicList = new List<Type>()
@@ -164,6 +169,9 @@ public static class CustomSettings
         typeof(BlendWeights),
         typeof(RenderTexture),
         typeof(Rigidbody),
+        
+
+
     };
 
     //重载函数，相同参数个数，相同位置out参数匹配出问题时, 需要强制匹配解决
