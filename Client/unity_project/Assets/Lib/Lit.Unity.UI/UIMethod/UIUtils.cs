@@ -15,7 +15,6 @@ namespace Lit.Unity.UI
         #endregion
 
 
-
         public static Sprite LoadSprite(string path)
         {
             if (path == null) return null;

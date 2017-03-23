@@ -143,9 +143,11 @@ namespace Lit.Unity
                         litEvent.EventType, litEvent.EventParam);
                     break;
                 case LitEventType.LE_UID:
+                    RegisterLifeEvent(litEvent);
                     InitUID(litEvent.EventParam);
                     break;
                 case LitEventType.LE_Handler:
+                    RegisterLifeEvent(litEvent);
                     InitLuaFile(litEvent.EventParam);
                     break;
                 case LitEventType.LE_InitDisable:

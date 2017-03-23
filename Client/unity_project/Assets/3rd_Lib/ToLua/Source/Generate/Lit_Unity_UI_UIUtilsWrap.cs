@@ -9,6 +9,7 @@ public class Lit_Unity_UI_UIUtilsWrap
 		L.BeginStaticLibs("UIUtils");
 		L.RegFunction("Log", Log);
 		L.RegFunction("LoadSprite", LoadSprite);
+		L.RegFunction("CatchEvent", CatchEvent);
 		L.EndStaticLibs();
 	}
 
@@ -38,6 +39,21 @@ public class Lit_Unity_UI_UIUtilsWrap
 			UnityEngine.Sprite o = Lit.Unity.UI.UIUtils.LoadSprite(arg0);
 			ToLua.Push(L, o);
 			return 1;
+		}
+		catch(Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int CatchEvent(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 0);
+			Lit.Unity.UI.UIUtils.CatchEvent();
+			return 0;
 		}
 		catch(Exception e)
 		{
