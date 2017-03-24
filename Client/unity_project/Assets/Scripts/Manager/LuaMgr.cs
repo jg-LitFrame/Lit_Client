@@ -37,21 +37,46 @@ public class LuaMgr :  SingletonBehaviour<LuaMgr>
         return luaMgr.DoFile(file_name);
     }
 
-    //效率待测
+    //TODO 效率待测
     public object[] CallFunc(string module_name, string func_name, params object[] args)
     {
         string full_name = string.Format("{0}.{1}",module_name,func_name);
-        var func = luaMgr.GetFunction(full_name);
-        return func.Call(args);
+        return CallFunc(full_name, args);
     }
 
     public void CallFunc(string module_name, string func_name, object p)
     {
         string full_name = string.Format("{0}.{1}", module_name, func_name);
-        var func = luaMgr.GetFunction(full_name);
-        func.Push(p);
-        func.Call();
-        func.EndPCall();
+        CallFunc(full_name, p);
     }
 
+
+    public void CallFunc(string funcFunName, object p)
+    {
+        try
+        {
+            var func = luaMgr.GetFunction(funcFunName);
+            func.Push(p);
+            func.Call();
+            func.EndPCall();
+
+        }catch(System.Exception e)
+        {
+            LitLogger.Error(e.Message);
+        }
+    }
+
+    public object[] CallFunc(string funcFunName, params object[] args)
+    {
+        try
+        {
+            var func = luaMgr.GetFunction(funcFunName);
+            return func.Call(args);
+        }
+        catch (System.Exception e)
+        {
+            LitLogger.Error(e.Message);
+            return null;
+        }
+    }
 }

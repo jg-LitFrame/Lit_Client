@@ -16,7 +16,6 @@ namespace Lit.Unity.UI
             Shrink = 1,
         }
 
-        public UnityEngine.Events.UnityEvent onCickEvent;
         public ClickAnimation animationType = ClickAnimation.Shrink;
         public string audioName = "btn_click";
         public float scaleFactor = 0.9f;
@@ -61,10 +60,12 @@ namespace Lit.Unity.UI
         {
             LitLogger.Log(this.gameObject.name + "OnClick");
 
-            if(onCickEvent != null && lastClickTime + clickInterval < Time.time)
+            if(lastClickTime + clickInterval < Time.time)
             {
-                onCickEvent.Invoke();
                 lastClickTime = Time.time;
+                LitLua lit = GetComponent<LitLua>();
+                if (lit != null)
+                    lit.GenerateEvent(LitEventType.LE_OnClick,lit);
             }
         }
     }
