@@ -9,6 +9,7 @@ namespace Lit.Unity.UI
 {
 
     [AddComponentMenu("LitUI/LitButton")]
+    [RequireComponent(typeof(LE_OnClick))]
     public partial class  LitButton : Button {
         public enum ClickAnimation
         {

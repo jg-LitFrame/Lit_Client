@@ -23,7 +23,7 @@ namespace Lit.Unity.UI
             litSerObj.SerializeProperties(
                 "script_path"
             );
-            if(!File.Exists(FileTools.MyLuaPath + handler.script_path.Replace('.', '/') + ".lua"))
+            if(!File.Exists(FileTools.EventHandleLuaPath + handler.script_path.Replace('.', '/') + ".lua"))
             {
                 GUILayout.Space(20);
                 DrawCreateBtn();
@@ -39,12 +39,20 @@ namespace Lit.Unity.UI
                 {
                     LitLogger.ErrorFormat("Invalid Path : {0}", handler.script_path);
                 }
-                string full_path = string.Concat(FileTools.MyLuaPath, handler.script_path.Replace('.','/'), ".lua");
+                string full_path = string.Concat(FileTools.EventHandleLuaPath, handler.script_path.Replace('.','/'), ".lua");
                 EnsureFold(full_path);
-                var fs = File.Create(full_path);
-                fs.Close();
+                CreateFile(full_path);
                 AssetDatabase.Refresh();
             }
+        }
+
+        private void CreateFile(string full_path)
+        {
+            string templateFilePath = FileTools.ClientDataPath + "UITemplate.lua";
+            var text = File.ReadAllText(templateFilePath);
+            string module_name = handler.script_path.Replace('.', '_');
+            var newText = text.Replace("{module_name}", module_name);
+            File.WriteAllText(full_path, newText);
         }
 
         private void EnsureFold(string full_path)

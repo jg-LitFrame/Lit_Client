@@ -11,7 +11,10 @@ public class FaceMgr: SingletonBehaviour<FaceMgr>
         base.Init();
         IndieMgrInit();
         InitSingleBehaviour(typeof(AudioMgr));
+        InitSingleBehaviour(typeof(TimerMgr));
         InitSingleBehaviour(typeof(LuaMgr));
+
+        DontDestroyOnLoad(this);
     }
 
     private void IndieMgrInit()
@@ -41,5 +44,10 @@ public class FaceMgr: SingletonBehaviour<FaceMgr>
     public static LuaMgr luaMgr
     {
         get { return LuaMgr.GetInstance(); }
+    }
+
+    public static TimerMgr timerMgr
+    {
+        get { return TimerMgr.GetInstance(); }
     }
 }

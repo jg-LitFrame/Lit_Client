@@ -8,8 +8,14 @@ public class Lit_Unity_UI_UIUtilsWrap
 	{
 		L.BeginStaticLibs("UIUtils");
 		L.RegFunction("Log", Log);
+		L.RegFunction("Warring", Warring);
+		L.RegFunction("Error", Error);
 		L.RegFunction("LoadSprite", LoadSprite);
 		L.RegFunction("CatchEvent", CatchEvent);
+		L.RegFunction("GetLit", GetLit);
+		L.RegFunction("WaitFor", WaitFor);
+		L.RegFunction("RepeatedCall", RepeatedCall);
+		L.RegFunction("RegistTimer", RegistTimer);
 		L.EndStaticLibs();
 	}
 
@@ -21,6 +27,38 @@ public class Lit_Unity_UI_UIUtilsWrap
 			ToLua.CheckArgsCount(L, 1);
 			object arg0 = ToLua.ToVarObject(L, 1);
 			Lit.Unity.UI.UIUtils.Log(arg0);
+			return 0;
+		}
+		catch(Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int Warring(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 1);
+			object arg0 = ToLua.ToVarObject(L, 1);
+			Lit.Unity.UI.UIUtils.Warring(arg0);
+			return 0;
+		}
+		catch(Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int Error(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 1);
+			object arg0 = ToLua.ToVarObject(L, 1);
+			Lit.Unity.UI.UIUtils.Error(arg0);
 			return 0;
 		}
 		catch(Exception e)
@@ -54,6 +92,99 @@ public class Lit_Unity_UI_UIUtilsWrap
 			ToLua.CheckArgsCount(L, 0);
 			Lit.Unity.UI.UIUtils.CatchEvent();
 			return 0;
+		}
+		catch(Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int GetLit(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 1);
+			string arg0 = ToLua.CheckString(L, 1);
+			Lit.Unity.LitLua o = Lit.Unity.UI.UIUtils.GetLit(arg0);
+			ToLua.Push(L, o);
+			return 1;
+		}
+		catch(Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int WaitFor(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 3);
+			Lit.Unity.LitLua arg0 = (Lit.Unity.LitLua)ToLua.CheckUnityObject(L, 1, typeof(Lit.Unity.LitLua));
+			string arg1 = ToLua.CheckString(L, 2);
+			float arg2 = (float)LuaDLL.luaL_checknumber(L, 3);
+			Lit.Unity.UI.UIUtils.WaitFor(arg0, arg1, arg2);
+			return 0;
+		}
+		catch(Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int RepeatedCall(IntPtr L)
+	{
+		try
+		{
+			int count = LuaDLL.lua_gettop(L);
+
+			if (count == 3 && TypeChecker.CheckTypes(L, 1, typeof(Lit.Unity.LitLua), typeof(string), typeof(float)))
+			{
+				Lit.Unity.LitLua arg0 = (Lit.Unity.LitLua)ToLua.ToObject(L, 1);
+				string arg1 = ToLua.ToString(L, 2);
+				float arg2 = (float)LuaDLL.lua_tonumber(L, 3);
+				Lit.Unity.LuaTimerEvent o = Lit.Unity.UI.UIUtils.RepeatedCall(arg0, arg1, arg2);
+				ToLua.PushObject(L, o);
+				return 1;
+			}
+			else if (count == 4 && TypeChecker.CheckTypes(L, 1, typeof(Lit.Unity.LitLua), typeof(string), typeof(float), typeof(float)))
+			{
+				Lit.Unity.LitLua arg0 = (Lit.Unity.LitLua)ToLua.ToObject(L, 1);
+				string arg1 = ToLua.ToString(L, 2);
+				float arg2 = (float)LuaDLL.lua_tonumber(L, 3);
+				float arg3 = (float)LuaDLL.lua_tonumber(L, 4);
+				Lit.Unity.LuaTimerEvent o = Lit.Unity.UI.UIUtils.RepeatedCall(arg0, arg1, arg2, arg3);
+				ToLua.PushObject(L, o);
+				return 1;
+			}
+			else
+			{
+				return LuaDLL.luaL_throw(L, "invalid arguments to method: Lit.Unity.UI.UIUtils.RepeatedCall");
+			}
+		}
+		catch(Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int RegistTimer(IntPtr L)
+	{
+		try
+		{
+			ToLua.CheckArgsCount(L, 5);
+			Lit.Unity.LitLua arg0 = (Lit.Unity.LitLua)ToLua.CheckUnityObject(L, 1, typeof(Lit.Unity.LitLua));
+			string arg1 = ToLua.CheckString(L, 2);
+			float arg2 = (float)LuaDLL.luaL_checknumber(L, 3);
+			int arg3 = (int)LuaDLL.luaL_checknumber(L, 4);
+			float arg4 = (float)LuaDLL.luaL_checknumber(L, 5);
+			Lit.Unity.LuaTimerEvent o = Lit.Unity.UI.UIUtils.RegistTimer(arg0, arg1, arg2, arg3, arg4);
+			ToLua.PushObject(L, o);
+			return 1;
 		}
 		catch(Exception e)
 		{

@@ -145,6 +145,11 @@ public static class CustomSettings
 
         //========= 自定义导出 ==========
         _GT(typeof(Lit.Unity.UI.UIUtils)),
+        _GT(typeof(Lit.Unity.LitLua)),
+        _GT(typeof(Lit.Unity.TimerEvent)),
+        _GT(typeof(Lit.Unity.LuaTimerEvent)),
+
+
     };
 
     public static List<Type> dynamicList = new List<Type>()

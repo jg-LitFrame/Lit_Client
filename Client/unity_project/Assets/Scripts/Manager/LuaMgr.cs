@@ -29,6 +29,7 @@ public class LuaMgr :  SingletonBehaviour<LuaMgr>
         new LuaResLoader();
         luaMgr.AddSearchPath(FileTools.ToLuaSystemInitPath);
         luaMgr.AddSearchPath(FileTools.SysLuaPath);
+        luaMgr.AddSearchPath(FileTools.EventHandleLuaPath);
     }
     #endregion
 
@@ -56,6 +57,7 @@ public class LuaMgr :  SingletonBehaviour<LuaMgr>
         try
         {
             var func = luaMgr.GetFunction(funcFunName);
+            if (func == null) return;
             func.Push(p);
             func.Call();
             func.EndPCall();
@@ -71,6 +73,7 @@ public class LuaMgr :  SingletonBehaviour<LuaMgr>
         try
         {
             var func = luaMgr.GetFunction(funcFunName);
+            if (func == null) return null;
             return func.Call(args);
         }
         catch (System.Exception e)

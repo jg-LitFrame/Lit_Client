@@ -12,6 +12,14 @@ namespace Lit.Unity.UI
             LitLogger.Log(obj);
         }
 
+        public static void Warring(object obj){
+            LitLogger.Warning(obj);
+        }
+
+        public static void Error(object obj)
+        {
+            LitLogger.Error(obj);
+        }
         #endregion
 
 

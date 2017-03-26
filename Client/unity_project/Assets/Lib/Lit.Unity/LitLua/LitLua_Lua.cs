@@ -9,18 +9,15 @@ namespace Lit.Unity
         //TODO
         public void InitLuaFile(string file_name)
         {
-           // int index = file_name.IndexOf('.');
-
-            this.module_name = file_name;//.Substring(0,index);
+            this.module_name = file_name.Replace('.','_');
             LoadLuafile(file_name);
         }
 
         //TODO
         public void LoadLuafile(string file_name)
         {
-          //  LitLogger.Log(file_name);
+            file_name = string.Concat(file_name.Replace('.', '/'), ".lua");
             FaceMgr.luaMgr.LoadScript(file_name);
-
         }
 
         public void CallLuaFunc(string func_name, object obj)
@@ -28,6 +25,14 @@ namespace Lit.Unity
             if (isRegisterEvent(LitEventType.LE_Handler))
             {
                 FaceMgr.luaMgr.CallFunc(module_name, func_name, obj);
+            }
+        }
+
+        public void CallLuaFunc(string func_name)
+        {
+            if (isRegisterEvent(LitEventType.LE_Handler))
+            {
+                FaceMgr.luaMgr.CallFunc(module_name, func_name);
             }
         }
 

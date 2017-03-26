@@ -21,8 +21,7 @@ namespace Lit.Unity.UI
                 "animationType",
                 "scaleFactor",
                 "clickInterval",
-                "tweenDuration",
-                 "onCickEvent"
+                "tweenDuration"
             );
             litSerObj.Apply();
         }

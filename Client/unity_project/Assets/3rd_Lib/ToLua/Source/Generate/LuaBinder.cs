@@ -72,6 +72,12 @@ public static class LuaBinder
 		L.EndModule();
 		L.BeginModule("Lit");
 		L.BeginModule("Unity");
+		Lit_Unity_LitLuaWrap.Register(L);
+		Lit_Unity_TimerEventWrap.Register(L);
+		Lit_Unity_LuaTimerEventWrap.Register(L);
+		Lit_Unity_LitBehaviourWrap.Register(L);
+		L.RegFunction("_D_Void", Lit_Unity__D_Void);
+		L.RegFunction("_D_OuterBool", Lit_Unity__D_OuterBool);
 		L.BeginModule("UI");
 		Lit_Unity_UI_UIUtilsWrap.Register(L);
 		L.EndModule();
@@ -253,6 +259,60 @@ public static class LuaBinder
 			{
 				LuaTable self = ToLua.CheckLuaTable(L, 2);
 				Delegate arg1 = DelegateFactory.CreateDelegate(typeof(UnityEngine.AudioClip.PCMSetPositionCallback), func, self);
+				ToLua.Push(L, arg1);
+			}
+			return 1;
+		}
+		catch(Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int Lit_Unity__D_Void(IntPtr L)
+	{
+		try
+		{
+			int count = LuaDLL.lua_gettop(L);
+			LuaFunction func = ToLua.CheckLuaFunction(L, 1);
+
+			if (count == 1)
+			{
+				Delegate arg1 = DelegateFactory.CreateDelegate(typeof(Lit.Unity._D_Void), func);
+				ToLua.Push(L, arg1);
+			}
+			else
+			{
+				LuaTable self = ToLua.CheckLuaTable(L, 2);
+				Delegate arg1 = DelegateFactory.CreateDelegate(typeof(Lit.Unity._D_Void), func, self);
+				ToLua.Push(L, arg1);
+			}
+			return 1;
+		}
+		catch(Exception e)
+		{
+			return LuaDLL.toluaL_exception(L, e);
+		}
+	}
+
+	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+	static int Lit_Unity__D_OuterBool(IntPtr L)
+	{
+		try
+		{
+			int count = LuaDLL.lua_gettop(L);
+			LuaFunction func = ToLua.CheckLuaFunction(L, 1);
+
+			if (count == 1)
+			{
+				Delegate arg1 = DelegateFactory.CreateDelegate(typeof(Lit.Unity._D_OuterBool), func);
+				ToLua.Push(L, arg1);
+			}
+			else
+			{
+				LuaTable self = ToLua.CheckLuaTable(L, 2);
+				Delegate arg1 = DelegateFactory.CreateDelegate(typeof(Lit.Unity._D_OuterBool), func, self);
 				ToLua.Push(L, arg1);
 			}
 			return 1;

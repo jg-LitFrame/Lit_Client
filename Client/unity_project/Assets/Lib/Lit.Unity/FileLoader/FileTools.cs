@@ -14,7 +14,9 @@ public static class FileTools {
 
     public static string SysLuaPath = DocsRoot + "/LuaCode/";
 
-    public static string MyLuaPath = DocsRoot + "/LuaCode/EventHandle/";
+    public static string EventHandleLuaPath = DocsRoot + "/LuaCode/EventHandle/";
+
+    public static string ClientDataPath = Application.dataPath + "/../../Data/";
     #endregion
 
 
