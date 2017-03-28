@@ -173,42 +173,28 @@ namespace Lit.Unity
             #region Use from Pool
             for (int i = 0; i < this._prefabPools.Count; i++)
             {
-                // Determine if the prefab was ever used as explained in the docs
-                //   I believe a comparison of two references is processor-cheap.
                 if (this._prefabPools[i].prefabGO == prefab.gameObject)
                 {
-                    // Now we know the prefabPool for this prefab exists. 
-                    // Ask the prefab pool to setup and activate an instance.
-                    // If there is no instance to spawn, a new one is instanced
                     inst = this._prefabPools[i].SpawnInstance(pos, rot);
 
-                    // This only happens if the limit option was used for this
-                    //   Prefab Pool.
                     if (inst == null) return null;
 					
-					if (parent != null)  // User explicitly provided a parent
+					if (parent != null)
 					{
 						inst.parent = parent;
 					}
                     else if (!this.dontReparent && inst.parent != this.group)  // Auto organize?
 					{
-						// If a new instance was created, it won't be grouped
                         inst.parent = this.group;
 					}
-
-                    // Add to internal list - holds only active instances in the pool
-                    // 	 This isn't needed for Pool functionality. It is just done 
-                    //	 as a user-friendly feature which has been needed before.
                     this._spawned.Add(inst);
-					
-	                // Notify instance it was spawned so it can manage it's state
+
+                    //TODO ÓÐ´ýÓÅ»¯
 	                inst.gameObject.BroadcastMessage(
 						"OnSpawned",
 						this,
 						SendMessageOptions.DontRequireReceiver
 					);
-
-                    // Done!
                     return inst;
                 }
             }
@@ -216,42 +202,31 @@ namespace Lit.Unity
 
 
             #region New PrefabPool
-            // The prefab wasn't found in any PrefabPools above. Make a new one
+
             PrefabPool newPrefabPool = new PrefabPool(prefab);
             this.CreatePrefabPool(newPrefabPool);
 
-            // Spawn the new instance (Note: prefab already set in PrefabPool)
             inst = newPrefabPool.SpawnInstance(pos, rot);
 			
-			if (parent != null)  // User explicitly provided a parent
+			if (parent != null)
 			{
 				inst.parent = parent;
 			}
-            else  // Auto organize
+            else
 			{
             	inst.parent = this.group;  
 			}
-
-
-            // New instances are active and must be added to the internal list 
             this._spawned.Add(inst);
             #endregion New PrefabPool
 
-            // Notify instance it was spawned so it can manage it's state
-            inst.gameObject.BroadcastMessage(
-				"OnSpawned",
-				this,
-				SendMessageOptions.DontRequireReceiver
-			);
+            inst.gameObject.BroadcastMessage("OnSpawned",this,SendMessageOptions.DontRequireReceiver);
 
-            // Done!
             return inst;
         }
         public Transform Spawn(Transform prefab, Vector3 pos, Quaternion rot)
         {
             Transform inst = this.Spawn(prefab, pos, rot, null);
 
-            // Can happen if limit was used
             if (inst == null) return null;
 
             return inst;
@@ -290,195 +265,80 @@ namespace Lit.Unity
         }
 
 
-        public AudioSource Spawn(AudioSource prefab,
-                            Vector3 pos, Quaternion rot)
+        public AudioSource Spawn(AudioSource prefab, Vector3 pos, Quaternion rot)
         {
-            return this.Spawn(prefab, pos, rot, null);  // parent = null
+            return this.Spawn(prefab, pos, rot, null);
         }
 
 
         public AudioSource Spawn(AudioSource prefab)
         {
-            return this.Spawn
-            (
-                prefab, 
-                Vector3.zero, Quaternion.identity,
-                null  // parent = null
-            );
+            return this.Spawn( prefab,  Vector3.zero, Quaternion.identity, null);
         }
 		
 	 	
 		public AudioSource Spawn(AudioSource prefab, Transform parent)
         {
-            return this.Spawn
-            (
-                prefab, 
-                Vector3.zero, 
-				Quaternion.identity,
-                parent
-            );
+            return this.Spawn( prefab, Vector3.zero, Quaternion.identity, parent );
         }
 		
 		
-        public AudioSource Spawn(AudioSource prefab,
-                            	 Vector3 pos, Quaternion rot,
-                            	 Transform parent)
+        public AudioSource Spawn(AudioSource prefab, Vector3 pos, Quaternion rot,Transform parent)
         {
-            // Instance using the standard method before doing particle stuff
             Transform inst = Spawn(prefab.transform, pos, rot, parent);
 
-            // Can happen if limit was used
             if (inst == null) return null;
-
-            // Get the emitter and start it
             var src = inst.GetComponent<AudioSource>();
             src.Play();
-
             this.StartCoroutine(this.ListForAudioStop(src));
-
             return src;
         }
 
-
-        /// <summary>
-        ///	See docs for SpawnInstance(Transform prefab, Vector3 pos, Quaternion rot)
-        ///	for basic functionalty information.
-        ///		
-        /// Pass a ParticleSystem component of a prefab to instantiate, trigger 
-        /// emit, then listen for when all particles have died to "auto-destruct", 
-        /// but instead of destroying the game object it will be deactivated and 
-        /// added to the pool to be reused.
-        /// 
-        /// IMPORTANT: 
-        ///     * You must pass a ParticleSystem next time as well, or the emitter
-        ///       will be treated as a regular prefab and simply activate, but emit
-        ///       will not be triggered!
-        ///     * The listner that waits for the death of all particles will 
-        ///       time-out after a set number of seconds and log a warning. 
-        ///       This is done to keep the developer aware of any unexpected 
-        ///       usage cases. Change the public property "maxParticleDespawnTime"
-        ///       to adjust this length of time.
-        /// 
-        /// Broadcasts "OnSpawned" to the instance. Use this instead of Awake()
-        ///		
-        /// This function has the same initial signature as Unity's Instantiate() 
-        /// that takes position and rotation. The return Type is different though.
-        /// </summary>
-        public ParticleSystem Spawn(ParticleSystem prefab,
-                                    Vector3 pos, Quaternion rot)
+        public ParticleSystem Spawn(ParticleSystem prefab, Vector3 pos, Quaternion rot)
         {
-            return Spawn(prefab, pos, rot, null);  // parent = null
-
+            return Spawn(prefab, pos, rot, null);
         }
 
-        /// <summary>
-        /// See primary Spawn ParticleSystem method for documentation.
-        /// 
-        /// Convienince overload to take only a prefab name and parent the new 
-        /// instance under the given parent. An instance will be set to the passed 
-        /// position and rotation.
-        /// </summary>
-        public ParticleSystem Spawn(ParticleSystem prefab,
-                                    Vector3 pos, Quaternion rot,
-                                    Transform parent)
+        public ParticleSystem Spawn(ParticleSystem prefab,Vector3 pos, Quaternion rot,Transform parent)
         {
-            // Instance using the standard method before doing particle stuff
             Transform inst = this.Spawn(prefab.transform, pos, rot, parent);
 
-            // Can happen if limit was used
             if (inst == null) return null;
-
-            // Get the emitter and start it
             var emitter = inst.GetComponent<ParticleSystem>();
-            //emitter.Play(true);  // Seems to auto-play on activation so this may not be needed
-
             this.StartCoroutine(this.ListenForEmitDespawn(emitter));
-
             return emitter;
         }
 
-
-        /// <summary>
-        ///	See docs for SpawnInstance(ParticleSystems prefab, Vector3 pos, Quaternion rot)
-        ///	This is the same but for ParticleEmitters
-        ///	
-        /// IMPORTANT: 
-        ///     * This function turns off Unity's ParticleAnimator autodestruct if
-        ///       one is found.
-        /// </summary>
-        public ParticleEmitter Spawn(ParticleEmitter prefab,
-                                     Vector3 pos, Quaternion rot)
+        public ParticleEmitter Spawn(ParticleEmitter prefab,Vector3 pos, Quaternion rot)
         {
-            // Instance using the standard method before doing particle stuff
             Transform inst = this.Spawn(prefab.transform, pos, rot);
 
-            // Can happen if limit was used
             if (inst == null) return null;
-
-            // Make sure autodestrouct is OFF as it will cause null references
             var animator = inst.GetComponent<ParticleAnimator>();
             if (animator != null) animator.autodestruct = false;
-
-            // Get the emitter
             var emitter = inst.GetComponent<ParticleEmitter>();
             emitter.emit = true;
-
             this.StartCoroutine(this.ListenForEmitDespawn(emitter));
-
             return emitter;
         }
 
-
-        /// <summary>
-        /// This will not be supported for Shuriken particles. This will eventually 
-        /// be depricated.
-        /// </summary>
-        /// <param name="prefab">
-        /// The prefab to instance. Not used if an instance already exists in 
-        /// the scene that is queued for reuse. Type = ParticleEmitter
-        /// </param>
-        /// <param name="pos">The position to set the instance to</param>
-        /// <param name="rot">The rotation to set the instance to</param>
-        /// <param name="colorPropertyName">Same as Material.SetColor()</param>
-        /// <param name="color">a Color object. Same as Material.SetColor()</param>
-        /// <returns>The instance's ParticleEmitter</returns>
-        public ParticleEmitter Spawn(ParticleEmitter prefab,
-                                     Vector3 pos, Quaternion rot,
-                                     string colorPropertyName, Color color)
+        public ParticleEmitter Spawn(ParticleEmitter prefab, Vector3 pos, Quaternion rot, string colorPropertyName, Color color)
         {
-            // Instance using the standard method before doing particle stuff
             Transform inst = this.Spawn(prefab.transform, pos, rot);
 
-            // Can happen if limit was used
             if (inst == null) return null;
-
-            // Make sure autodestrouct is OFF as it will cause null references
             var animator = inst.GetComponent<ParticleAnimator>();
             if (animator != null) animator.autodestruct = false;
-
-            // Get the emitter
             var emitter = inst.GetComponent<ParticleEmitter>();
-
-            // Set the color of the particles, then emit
             emitter.GetComponent<Renderer>().material.SetColor(colorPropertyName, color);
             emitter.emit = true;
-
             this.StartCoroutine(ListenForEmitDespawn(emitter));
 
             return emitter;
         }
 
-
-        /// <summary>
-        ///	If the passed object is managed by the SpawnPool, it will be 
-        ///	deactivated and made available to be spawned again.
-        ///		
-        /// Despawned instances are removed from the primary list.
-        /// </summary>
-        /// <param name="item">The transform of the gameobject to process</param>
         public void Despawn(Transform instance)
         {
-            // Find the item and despawn it
             bool despawned = false;
             for (int i = 0; i < this._prefabPools.Count; i++)
             {
@@ -486,19 +346,16 @@ namespace Lit.Unity
                 {
                     despawned = this._prefabPools[i].DespawnInstance(instance);
                     break;
-                }  // Protection - Already despawned?
+                }
                 else if (this._prefabPools[i]._despawned.Contains(instance))
                 {
-                    Debug.LogError(
-                        string.Format("SpawnPool {0}: {1} has already been despawned. " +
+                    LitLogger.WarningFormat("SpawnPool {0}: {1} has already been despawned. " +
                                        "You cannot despawn something more than once!",
                                         this.poolName,
-                                        instance.name));
+                                        instance.name);
                     return;
                 }
             }
-
-            // If still false, then the instance wasn't found anywhere in the pool
             if (!despawned)
             {
                 Debug.LogError(string.Format("SpawnPool {0}: {1} not found in SpawnPool",
@@ -506,65 +363,31 @@ namespace Lit.Unity
                                instance.name));
                 return;
             }
-
-            // Remove from the internal list. Only active instances are kept. 
-            // 	 This isn't needed for Pool functionality. It is just done 
-            //	 as a user-friendly feature which has been needed before.
             this._spawned.Remove(instance);
         }
 
-
-        /// <summary>
-        ///	See docs for Despawn(Transform instance) for basic functionalty information.
-        ///		
-        /// Convienince overload to provide the option to re-parent for the instance 
-        /// just before despawn.
-        /// </summary>
         public void Despawn(Transform instance, Transform parent)
         {
             instance.parent = parent;
             this.Despawn(instance);
         }
 
-
-        /// <description>
-        /// See docs for Despawn(Transform instance). This expands that functionality.
-        ///   If the passed object is managed by this SpawnPool, it will be 
-        ///   deactivated and made available to be spawned again.
-        /// </description>
-        /// <param name="item">The transform of the instance to process</param>
-        /// <param name="seconds">The time in seconds to wait before despawning</param>
         public void Despawn(Transform instance, float seconds)
         {
             this.StartCoroutine(this.DoDespawnAfterSeconds(instance, seconds, false, null));
         }
 
-
-        /// <summary>
-        ///	See docs for Despawn(Transform instance) for basic functionalty information.
-        ///		
-        /// Convienince overload to provide the option to re-parent for the instance 
-        /// just before despawn.
-        /// </summary>
         public void Despawn(Transform instance, float seconds, Transform parent)
         {
             this.StartCoroutine(this.DoDespawnAfterSeconds(instance, seconds, true, parent));
         }
 
-
-        /// <summary>
-        /// Waits X seconds before despawning. See the docs for DespawnAfterSeconds()
-        /// the argument useParent is used because a null parent is valid in Unity. It will 
-        /// make the scene root the parent
-        /// </summary>
         private IEnumerator DoDespawnAfterSeconds(Transform instance, float seconds, bool useParent, Transform parent)
         {
             GameObject go = instance.gameObject;
             while (seconds > 0)
             {
                 yield return null;
-
-                // If the instance was deactivated while waiting here, just quit
                 if (!go.activeInHierarchy)
                     yield break;
                 
@@ -577,10 +400,6 @@ namespace Lit.Unity
                 this.Despawn(instance);
         }
 
-
-        /// <description>
-        /// Despawns all active instances in this SpawnPool
-        /// </description>
         public void DespawnAll()
         {
             var spawned = new List<Transform>(this._spawned);
@@ -588,11 +407,6 @@ namespace Lit.Unity
                 this.Despawn(spawned[i]);
         }
 
-
-        /// <description>
-        ///	Returns true if the passed transform is currently spawned.
-        /// </description>
-        /// <param name="item">The transform of the gameobject to test</param>
         public bool IsSpawned(Transform instance)
         {
             return this._spawned.Contains(instance);
@@ -603,11 +417,6 @@ namespace Lit.Unity
 
 
         #region Utility Functions
-        /// <summary>
-        /// Returns the prefab pool for a given prefab.
-        /// </summary>
-        /// <param name="prefab">The Transform of an instance</param>
-        /// <returns>PrefabPool</returns>
         public PrefabPool GetPrefabPool(Transform prefab)
         {
             for (int i = 0; i < this._prefabPools.Count; i++)
@@ -619,8 +428,6 @@ namespace Lit.Unity
                 if (this._prefabPools[i].prefabGO == prefab.gameObject)
                     return this._prefabPools[i];
             }
-
-            // Nothing found
             return null;
         }
 
@@ -806,125 +613,28 @@ namespace Lit.Unity
 
 
 
-    /// <summary>
-    /// This class is used to display a more complex user entry interface in the 
-    /// Unity Editor so we can collect more options related to each Prefab.
-    /// 
-    /// See this class documentation for Editor Options.
-    /// 
-    /// This class is also the primary pool functionality for SpawnPool. SpawnPool
-    /// manages the Pool using these settings and methods. See the SpawnPool 
-    /// documentation for user documentation and usage.
-    /// </summary>
     [System.Serializable]
     public class PrefabPool
     {
 
         #region Public Properties Available in the Editor
-        /// <summary>
-        /// The prefab to preload
-        /// </summary>
+
         public Transform prefab;
-
-        /// <summary>
-        /// A reference of the prefab's GameObject stored for performance reasons
-        /// </summary>
-        internal GameObject prefabGO;  // Hidden in inspector, but not Debug tab
-
-        /// <summary>
-        /// The number of instances to preload
-        /// </summary>
+        internal GameObject prefabGO;
         public int preloadAmount = 1;
-
-        /// <summary>
-        /// Displays the 'preload over time' options
-        /// </summary>
         public bool preloadTime = false;
-
-        /// <summary>
-        /// The number of frames it will take to preload all requested instances
-        /// </summary>
         public int preloadFrames = 2;
-
-        /// <summary>
-        /// The number of seconds to wait before preloading any instances
-        /// </summary>
         public float preloadDelay = 0;
-
-        /// <summary>
-        /// Limits the number of instances allowed in the game. Turning this ON
-        ///	means when 'Limit Amount' is hit, no more instances will be created.
-        /// CALLS TO SpawnPool.Spawn() WILL BE IGNORED, and return null!
-        ///
-        /// This can be good for non-critical objects like bullets or explosion
-        ///	Flares. You would never want to use this for enemies unless it makes
-        ///	sense to begin ignoring enemy spawns in the context of your game.
-        /// </summary>
         public bool limitInstances = false;
-
-        /// <summary>
-        /// This is the max number of instances allowed if 'limitInstances' is ON.
-        /// </summary>
         public int limitAmount = 100;
-
-        /// <summary>
-        /// FIFO stands for "first-in-first-out". Normally, limiting instances will
-        /// stop spawning and return null. If this is turned on (set to true) the
-        /// first spawned instance will be despawned and reused instead, keeping the
-        /// total spawned instances limited but still spawning new instances.
-        /// </summary>
-        public bool limitFIFO = false;  // Keep after limitAmount for auto-inspector
-
-        /// <summary>
-        /// Turn this ON to activate the culling feature for this Pool. 
-        /// Use this feature to remove despawned (inactive) instances from the pool
-        /// if the size of the pool grows too large. 
-        ///	
-        /// DO NOT USE THIS UNLESS YOU NEED TO MANAGE MEMORY ISSUES!
-        /// This should only be used in extreme cases for memory management. 
-        /// For most pools (or games for that matter), it is better to leave this 
-        /// off as memory is more plentiful than performance. If you do need this
-        /// you can fine tune how often this is triggered to target extreme events.
-        /// 
-        /// A good example of when to use this would be if you you are Pooling 
-        /// projectiles and usually never need more than 10 at a time, but then
-        /// there is a big one-off fire-fight where 50 projectiles are needed. 
-        /// Rather than keep the extra 40 around in memory from then on, set the 
-        /// 'Cull Above' property to 15 (well above the expected max) and the Pool 
-        /// will Destroy() the extra instances from the game to free up the memory. 
-        /// 
-        /// This won't be done immediately, because you wouldn't want this culling 
-        /// feature to be fighting the Pool and causing extra Instantiate() and 
-        /// Destroy() calls while the fire-fight is still going on. See 
-        /// "Cull Delay" for more information about how to fine tune this.
-        /// </summary>
+        public bool limitFIFO = false;
         public bool cullDespawned = false;
-
-        /// <summary>
-        /// The number of TOTAL (spawned + despawned) instances to keep. 
-        /// </summary>
         public int cullAbove = 50;
-
-        /// <summary>
-        /// The amount of time, in seconds, to wait before culling. This is timed 
-        /// from the moment when the Queue's TOTAL count (spawned + despawned) 
-        /// becomes greater than 'Cull Above'. Once triggered, the timer is repeated 
-        /// until the count falls below 'Cull Above'.
-        /// </summary>
         public int cullDelay = 60;
-
-        /// <summary>
-        /// The maximum number of instances to destroy per this.cullDelay
-        /// </summary>
         public int cullMaxPerPass = 5;
-
-        /// <summary>
-        /// Prints information during run-time to make debugging easier. This will 
-        /// be set to true if the owner SpawnPool is true, otherwise the user's setting
-        /// here will be used
-        /// </summary>
-        public bool _logMessages = false;  // Used by the inspector
-        public bool logMessages            // Read-only
+        public bool _logMessages = false;
+        private bool forceLoggingSilent = false;
+        public bool logMessages
         {
             get
             {
@@ -937,14 +647,7 @@ namespace Lit.Unity
             }
         }
 
-        // Forces logging to be silent regardless of user settings.
-        private bool forceLoggingSilent = false;
 
-
-        /// <summary>
-        /// Used internally to reference back to the owner spawnPool for things like
-        /// anchoring co-routines.
-        /// </summary>
         public SpawnPool spawnPool;
         #endregion Public Properties Available in the Editor
 
@@ -1002,40 +705,24 @@ namespace Lit.Unity
 
 
         #region Pool Functionality
-        /// <summary>
-        /// Is set to true when the culling coroutine is started so another one
-        /// won't be
-        /// </summary>
+    
         private bool cullingActive = false;
+        private bool _preloaded = false;
 
-
-        /// <summary>
-        /// The active instances associated with this prefab. This is the pool of
-        /// instances created by this prefab.
-        /// 
-        /// Managed by a SpawnPool
-        /// </summary>
-        internal List<Transform> _spawned = new List<Transform>();
+        public List<Transform> _spawned = new List<Transform>();
+        public List<Transform> _despawned = new List<Transform>();
         public List<Transform> spawned { get { return new List<Transform>(this._spawned); } }
-
-        /// <summary>
-        /// The deactive instances associated with this prefab. This is the pool of
-        /// instances created by this prefab.
-        /// 
-        /// Managed by a SpawnPool
-        /// </summary>
-        internal List<Transform> _despawned = new List<Transform>();
         public List<Transform> despawned { get { return new List<Transform>(this._despawned); } }
+        public bool preloaded
+        {
+            get { return this._preloaded; }
+            private set { this._preloaded = value; }
+        }
 
-
-        /// <summary>
-        /// Returns the total count of instances in the PrefabPool
-        /// </summary>
         public int totalCount
         {
             get
             {
-                // Add all the items in the pool to get the total count
                 int count = 0;
                 count += this._spawned.Count;
                 count += this._despawned.Count;
@@ -1043,26 +730,7 @@ namespace Lit.Unity
             }
         }
 
-
-        /// <summary>
-        /// Used to make PreloadInstances() a one-time event. Read-only.
-        /// </summary>
-        private bool _preloaded = false;
-        internal bool preloaded
-        {
-            get { return this._preloaded; }
-            private set { this._preloaded = value; }
-        }
-
-
-        /// <summary>
-        /// Move an instance from despawned to spawned, set the position and 
-        /// rotation, activate it and all children and return the transform
-        /// </summary>
-        /// <returns>
-        /// True if successfull, false if xform isn't in the spawned list
-        /// </returns>
-        internal bool DespawnInstance(Transform xform)
+        public bool DespawnInstance(Transform xform)
         {
             return DespawnInstance(xform, true);
         }
@@ -1075,13 +743,9 @@ namespace Lit.Unity
                                        this.prefab.name,
                                        xform.name));
 
-            // Switch to the despawned list
             this._spawned.Remove(xform);
             this._despawned.Add(xform);
 
-            // Notify instance of event OnDespawned for custom code additions.
-            //   This is done before handling the deactivate and enqueue incase 
-            //   there the user introduces an unforseen issue.
             if (sendEventMessage)
                 xform.gameObject.BroadcastMessage(
 					"OnDespawned",
@@ -1089,16 +753,9 @@ namespace Lit.Unity
                     SendMessageOptions.DontRequireReceiver
 				);
 
-            // Deactivate the instance and all children
             PoolManagerUtils.SetActive(xform.gameObject, false);
 
-            // Trigger culling if the feature is ON and the size  of the 
-            //   overall pool is over the Cull Above threashold.
-            //   This is triggered here because Despawn has to occur before
-            //   it is worth culling anyway, and it is run fairly often.
-            if (!this.cullingActive &&   // Cheap & Singleton. Only trigger once!
-                this.cullDespawned &&    // Is the feature even on? Cheap too.
-                this.totalCount > this.cullAbove)   // Criteria met?
+            if (!this.cullingActive && this.cullDespawned && this.totalCount > this.cullAbove)
             {
                 this.cullingActive = true;
                 this.spawnPool.StartCoroutine(CullDespawned());
@@ -1108,12 +765,6 @@ namespace Lit.Unity
 
 
 
-        /// <summary>
-        /// Waits for 'cullDelay' in seconds and culls the 'despawned' list if 
-        /// above 'cullingAbove' amount. 
-        /// 
-        /// Triggered by DespawnInstance()
-        /// </summary>
         internal IEnumerator CullDespawned()
         {
             if (this.logMessages)
@@ -1123,8 +774,6 @@ namespace Lit.Unity
                                         this.prefab.name,
                                         this.cullDelay));
 
-            // First time always pause, then check to see if the condition is
-            //   still true before attempting to cull.
             yield return new WaitForSeconds(this.cullDelay);
 
             while (this.totalCount > this.cullAbove)
@@ -1204,14 +853,11 @@ namespace Lit.Unity
 
                 if (this.logMessages)
                 {
-                    Debug.Log(string.Format
-                    (
-                        "SpawnPool {0} ({1}): " +
-                            "LIMIT REACHED! FIFO=True. Calling despawning for {2}...",
+                    Debug.LogErrorFormat( "SpawnPool {0} ({1}): LIMIT REACHED! FIFO=True. Calling despawning for {2}...",
                         this.spawnPool.poolName,
                         this.prefab.name,
                         firstIn
-                    ));
+                    );
                 }
 
                 this.DespawnInstance(firstIn);
