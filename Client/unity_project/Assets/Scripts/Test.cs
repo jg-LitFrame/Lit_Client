@@ -5,7 +5,27 @@ using Lit.Unity;
 using UnityEngine.UI;
 using Lit.Protobuf;
 
-public class Test : MonoBehaviour {
+public class Test : LitBehaviour {
+
+
+
+    bool isStart = false;
+
+    private void Update()
+    {
+        if (!isStart) return;
+        var c = PoolMgr.Pools["fight"].Spawn("Cube");
+        c.SetParent(null);
+        WaitFor(0.1f, () => {
+            PoolMgr.Pools["fight"].Despawn(c);
+        });
+    }
+    [ContextMenu("testPool")]
+    public void testPool()
+    {
+        isStart = !isStart;
+    }
+
 
 
     private void Start()

@@ -6,27 +6,9 @@ using System.Collections.Generic;
 namespace Lit.Unity
 {
 
-    public static class PoolManager
-    {
-        public static readonly SpawnPoolsDict Pools = new SpawnPoolsDict();
-    }
-
-    public static class PoolManagerUtils
-    {
-        internal static void SetActive(GameObject obj, bool state)
-        {
-            obj.SetActive(state);
-        }
-
-        public static bool activeInHierarchy(GameObject obj)
-        {
-            return obj.activeInHierarchy;
-        }
-    }
-
     public class SpawnPoolsDict
     {
-    
+
         public delegate void OnCreatedDelegate(SpawnPool pool);
 
         public Dictionary<string, OnCreatedDelegate> onCreatedDelegates =
@@ -82,7 +64,7 @@ namespace Lit.Unity
                 }
                 catch (KeyNotFoundException)
                 {
-                    LitLogger.WarningFormat("A Pool with the name '{0}' not found. " + "\nPools={1}",key, this.ToString());
+                    LitLogger.WarningFormat("A Pool with the name '{0}' not found. " + "\nPools={1}", key, this.ToString());
                     return null;
                 }
                 return pool;
@@ -93,8 +75,8 @@ namespace Lit.Unity
 
         public SpawnPool Create(string poolName)
         {
-            //TODO 是否应该加个父节点
             var owner = new GameObject(poolName + "Pool");
+            owner.transform.SetParent(PoolMgr.GetInstance().transform);
             return owner.GetOrAddComponent<SpawnPool>();
         }
 
@@ -164,7 +146,7 @@ namespace Lit.Unity
         {
             if (!this.ContainsKey(spawnPool.poolName))
             {
-                LitLogger.WarningFormat(string.Format("Pool not in PoolManager: {0}",spawnPool.poolName));
+                LitLogger.WarningFormat(string.Format("Pool not in PoolManager: {0}", spawnPool.poolName));
                 return false;
             }
 
@@ -186,5 +168,18 @@ namespace Lit.Unity
             return this._pools.TryGetValue(poolName, out spawnPool);
         }
 
+    }
+
+    public static class PoolManagerUtils
+    {
+        internal static void SetActive(GameObject obj, bool state)
+        {
+            obj.SetActive(state);
+        }
+
+        public static bool activeInHierarchy(GameObject obj)
+        {
+            return obj.activeInHierarchy;
+        }
     }
 }

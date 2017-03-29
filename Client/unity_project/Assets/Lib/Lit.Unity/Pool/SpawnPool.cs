@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 namespace Lit.Unity
 {
-    
-    [AddComponentMenu("PoolManager/SpawnPool")]
     public sealed class SpawnPool : MonoBehaviour
     {
         #region Inspector Parameters
@@ -104,7 +102,7 @@ namespace Lit.Unity
                 this._perPrefabPoolOptions[i].inspectorInstanceConstructor();
                 this.CreatePrefabPool(this._perPrefabPoolOptions[i]);
             }
-            PoolManager.Pools.Add(this);
+            PoolMgr.Pools.Add(this);
         }
 
 
@@ -112,7 +110,7 @@ namespace Lit.Unity
         {
             LogInfo(string.Format("SpawnPool {0}: Destroying...", this.poolName));
 
-            PoolManager.Pools.Remove(this);
+            PoolMgr.Pools.Remove(this);
             this.StopAllCoroutines();
             this._spawned.Clear();
             foreach (PrefabPool pool in this._prefabPools) pool.SelfDestruct();
@@ -653,24 +651,15 @@ namespace Lit.Unity
 
 
         #region Constructor and Self-Destruction
-        /// <description>
-        ///	Constructor to require a prefab Transform
-        /// </description>
         public PrefabPool(Transform prefab)
         {
             this.prefab = prefab;
             this.prefabGO = prefab.gameObject;
         }
 
-        /// <description>
-        ///	Constructor for Serializable inspector use only
-        /// </description>
         public PrefabPool() { }
 
-        /// <description>
-        ///	A pseudo constructor to init stuff not init by the serialized inspector-created
-        ///	instance of this class.
-        /// </description>
+
         internal void inspectorInstanceConstructor()
         {
             this.prefabGO = this.prefab.gameObject;
@@ -679,17 +668,12 @@ namespace Lit.Unity
         }
 
 
-        /// <summary>
-        /// Run by a SpawnPool when it is destroyed
-        /// </summary>
         internal void SelfDestruct()
         {
-            // Probably overkill but no harm done
             this.prefab = null;
             this.prefabGO = null;
             this.spawnPool = null;
 
-            // Go through both lists and destroy everything
             foreach (Transform inst in this._despawned)
                 if (inst != null)
                     Object.Destroy(inst.gameObject);
@@ -735,7 +719,7 @@ namespace Lit.Unity
             return DespawnInstance(xform, true);
         }
 
-        internal bool DespawnInstance(Transform xform, bool sendEventMessage)
+        public bool DespawnInstance(Transform xform, bool sendEventMessage)
         {
             if (this.logMessages)
                 Debug.Log(string.Format("SpawnPool {0} ({1}): Despawning '{2}'",
@@ -778,14 +762,11 @@ namespace Lit.Unity
 
             while (this.totalCount > this.cullAbove)
             {
-                // Attempt to delete an amount == this.cullMaxPerPass
                 for (int i = 0; i < this.cullMaxPerPass; i++)
                 {
-                    // Break if this.cullMaxPerPass would go past this.cullAbove
                     if (this.totalCount <= this.cullAbove)
-                        break;  // The while loop will stop as well independently
+                        break;
 
-                    // Destroy the last item in the list
                     if (this._despawned.Count > 0)
                     {
                         Transform inst = this._despawned[0];
@@ -812,8 +793,6 @@ namespace Lit.Unity
                         break;
                     }
                 }
-
-                // Check again later
                 yield return new WaitForSeconds(this.cullDelay);
             }
 
@@ -822,30 +801,12 @@ namespace Lit.Unity
                                         this.spawnPool.poolName,
                                         this.prefab.name));
 
-            // Reset the singleton so the feature can be used again if needed.
             this.cullingActive = false;
             yield return null;
         }
 
-
-
-        /// <summary>
-        /// Move an instance from despawned to spawned, set the position and 
-        /// rotation, activate it and all children and return the transform.
-        /// 
-        /// If there isn't an instance available, a new one is made.
-        /// </summary>
-        /// <returns>
-        /// The new instance's Transform. 
-        /// 
-        /// If the Limit option was used for the PrefabPool associated with the
-        /// passed prefab, then this method will return null if the limit is
-        /// reached.
-        /// </returns>    
         internal Transform SpawnInstance(Vector3 pos, Quaternion rot)
         {
-            // Handle FIFO limiting if the limit was used and reached.
-            //   If first-in-first-out, despawn item zero and continue on to respawn it
             if (this.limitInstances && this.limitFIFO &&
                 this._spawned.Count >= this.limitAmount)
             {
@@ -861,29 +822,21 @@ namespace Lit.Unity
                 }
 
                 this.DespawnInstance(firstIn);
-
-                // Because this is an internal despawn, we need to re-sync the SpawnPool's
-                //  internal list to reflect this
                 this.spawnPool._spawned.Remove(firstIn);
             }
 
             Transform inst;
 
-            // If nothing is available, create a new instance
             if (this._despawned.Count == 0)
             {
-                // This will also handle limiting the number of NEW instances
                 inst = this.SpawnNew(pos, rot);
             }
             else
             {
-                // Switch the instance we are using to the spawned list
-                // Use the first item in the list for ease
                 inst = this._despawned[0];
                 this._despawned.RemoveAt(0);
                 this._spawned.Add(inst);
 
-                // This came up for a user so this was added to throw a user-friendly error
                 if (inst == null)
                 {
                     var msg = "Make sure you didn't delete a despawned instance directly.";
@@ -896,40 +849,19 @@ namespace Lit.Unity
                                             this.prefab.name,
                                             inst.name));
 
-                // Get an instance and set position, rotation and then 
-                //   Reactivate the instance and all children
+
                 inst.position = pos;
                 inst.rotation = rot;
                 PoolManagerUtils.SetActive(inst.gameObject, true);
 
             }
-			
-			//
-			// NOTE: OnSpawned message broadcast was moved to main Spawn() to ensure it runs last
-			//
-			
             return inst;
         }
 
 
-
-        /// <summary>
-        /// Spawns a NEW instance of this prefab and adds it to the spawned list.
-        /// The new instance is placed at the passed position and rotation
-        /// </summary>
-        /// <param name="pos">Vector3</param>
-        /// <param name="rot">Quaternion</param>
-        /// <returns>
-        /// The new instance's Transform. 
-        /// 
-        /// If the Limit option was used for the PrefabPool associated with the
-        /// passed prefab, then this method will return null if the limit is
-        /// reached.
-        /// </returns>
         public Transform SpawnNew() { return this.SpawnNew(Vector3.zero, Quaternion.identity); }
         public Transform SpawnNew(Vector3 pos, Quaternion rot)
         {
-            // Handle limiting if the limit was used and reached.
             if (this.limitInstances && this.totalCount >= this.limitAmount)
             {
                 if (this.logMessages)
@@ -946,15 +878,14 @@ namespace Lit.Unity
                 return null;
             }
 
-            // Use the SpawnPool group as the default position and rotation
             if (pos == Vector3.zero) pos = this.spawnPool.group.position;
             if (rot == Quaternion.identity) rot = this.spawnPool.group.rotation;
 
             var inst = (Transform)Object.Instantiate(this.prefab, pos, rot);
-            this.nameInstance(inst);  // Adds the number to the end
+            this.nameInstance(inst);
 
             if (!this.spawnPool.dontReparent)
-                inst.parent = this.spawnPool.group;  // The group is the parent by default
+                inst.parent = this.spawnPool.group;
 
             if (this.spawnPool.matchPoolScale)
                 inst.localScale = Vector3.one;
@@ -962,7 +893,6 @@ namespace Lit.Unity
             if (this.spawnPool.matchPoolLayer)
                 this.SetRecursively(inst, this.spawnPool.gameObject.layer);
 
-            // Start tracking the new instance
             this._spawned.Add(inst);
 
             if (this.logMessages)
@@ -975,11 +905,6 @@ namespace Lit.Unity
         }
 
 
-        /// <summary>
-        /// Sets the layer of the passed transform and all of its children
-        /// </summary>
-        /// <param name="xform">The transform to process</param>
-        /// <param name="layer">The new layer</param>
         private void SetRecursively(Transform xform, int layer)
         {
             xform.gameObject.layer = layer;
@@ -988,40 +913,21 @@ namespace Lit.Unity
         }
 
 
-        /// <summary>
-        /// Used by a SpawnPool to add an existing instance to this PrefabPool.
-        /// This is used during game start to pool objects which are not 
-        /// instantiated at runtime
-        /// </summary>
-        /// <param name="inst">The instance to add</param>
-        /// <param name="despawn">True to despawn on add</param>
         internal void AddUnpooled(Transform inst, bool despawn)
         {
-            this.nameInstance(inst);   // Adds the number to the end
+            this.nameInstance(inst);
 
             if (despawn)
             {
-                // Deactivate the instance and all children
                 PoolManagerUtils.SetActive(inst.gameObject, false);
-
-                // Start Tracking as despawned
                 this._despawned.Add(inst);
             }
             else
                 this._spawned.Add(inst);
         }
 
-
-        /// <summary>
-        /// Preload PrefabPool.preloadAmount instances if they don't already exist. In 
-        /// otherwords, if there are 7 and 10 should be preloaded, this only creates 3.
-        /// This is to allow asynchronous Spawn() usage in Awake() at game start
-        /// </summary>
-        /// <returns></returns>
         internal void PreloadInstances()
         {
-            // If this has already been run for this PrefabPool, there is something
-            //   wrong!
             if (this.preloaded)
             {
                 Debug.Log(string.Format("SpawnPool {0} ({1}): " +
@@ -1043,8 +949,6 @@ namespace Lit.Unity
                 return;
             }
 
-            // Protect against preloading more than the limit amount setting
-            //   This prevents an infinite loop on load if FIFO is used.
             if (this.limitInstances && this.preloadAmount > this.limitAmount)
             {
                 Debug.LogWarning
@@ -1063,8 +967,6 @@ namespace Lit.Unity
                 this.preloadAmount = this.limitAmount;
             }
 
-            // Notify the user if they made a mistake using Culling
-            //   (First check is cheap)
             if (this.cullDespawned && this.preloadAmount > this.cullAbove)
             {
                 Debug.LogWarning(string.Format("SpawnPool {0} ({1}): " +
@@ -1098,20 +1000,14 @@ namespace Lit.Unity
             }
             else
             {
-                // Reduce debug spam: Turn off this.logMessages then set it back when done.
                 this.forceLoggingSilent = true;
 
                 Transform inst;
-                while (this.totalCount < this.preloadAmount) // Total count will update
+                while (this.totalCount < this.preloadAmount)
                 {
-                    // Preload...
-                    // This will parent, position and orient the instance
-                    //   under the SpawnPool.group
                     inst = this.SpawnNew();
                     this.DespawnInstance(inst, false);
                 }
-
-                // Restore the previous setting
                 this.forceLoggingSilent = false;
             }
         }
@@ -1121,25 +1017,18 @@ namespace Lit.Unity
             yield return new WaitForSeconds(this.preloadDelay);
 
             Transform inst;
-
-            // subtract anything spawned by other scripts, just in case
             int amount = this.preloadAmount - this.totalCount;
             if (amount <= 0)
                 yield break;
 
-            // Doesn't work for Windows8...
-            //  This does the division and sets the remainder as an out value.
-            //int numPerFrame = System.Math.DivRem(amount, this.preloadFrames, out remainder);
             int remainder = amount % this.preloadFrames;
             int numPerFrame = amount / this.preloadFrames;
 
-            // Reduce debug spam: Turn off this.logMessages then set it back when done.
             this.forceLoggingSilent = true;
 
             int numThisFrame;
             for (int i = 0; i < this.preloadFrames; i++)
             {
-                // Add the remainder to the *last* frame
                 numThisFrame = numPerFrame;
                 if (i == this.preloadFrames - 1)
                 {
@@ -1148,36 +1037,22 @@ namespace Lit.Unity
 
                 for (int n = 0; n < numThisFrame; n++)
                 {
-                    // Preload...
-                    // This will parent, position and orient the instance
-                    //   under the SpawnPool.group
                     inst = this.SpawnNew();
                     if (inst != null)
                         this.DespawnInstance(inst, false);
 
                     yield return null;
                 }
-
-                // Safety check in case something else is making instances. 
-                //   Quit early if done early
                 if (this.totalCount > this.preloadAmount)
                     break;
             }
 
-            // Restore the previous setting
             this.forceLoggingSilent = false;
         }
 
         #endregion Pool Functionality
 
 
-        #region Utilities
-        /// <summary>
-        /// If this PrefabPool spawned or despawned lists contain the given 
-        /// transform, true is returned. Othrewise, false is returned
-        /// </summary>
-        /// <param name="transform">A transform to test.</param>
-        /// <returns>bool</returns>
         public bool Contains(Transform transform)
         {
             if (this.prefabGO == null)
@@ -1197,20 +1072,10 @@ namespace Lit.Unity
             return false;
         }
         
-        /// <summary>
-        /// Appends a number to the end of the passed transform. The number
-        /// will be one more than the total objects in this PrefabPool, so 
-        /// name the object BEFORE adding it to the spawn or depsawn lists.
-        /// </summary>
-        /// <param name="instance"></param>
         private void nameInstance(Transform instance)
         {
-            // Rename by appending a number to make debugging easier
-            //   ToString() used to pad the number to 3 digits. Hopefully
-            //   no one has 1,000+ objects.
             instance.name += (this.totalCount + 1).ToString("#000");
         }
-        #endregion Utilities
 
     }
 
