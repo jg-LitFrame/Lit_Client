@@ -41,6 +41,17 @@ namespace Lit.Unity
                 return false;
             return true;
         }
+
+        public static void _Shuffle<T>(this List<T> list)
+        {
+            int N = list.Count;
+            for (int i = 0; i < N; i++)
+            {
+                int r = Random.Range(0, N);
+                list._Swap(i, r);
+            }
+        }
+
         #endregion
     }
 
